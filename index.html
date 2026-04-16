@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSec Shop</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+        }
+        header {
+            background: #020617;
+            padding: 20px;
+            text-align: center;
+        }
+        nav a {
+            color: #38bdf8;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .hero {
+            padding: 60px;
+            text-align: center;
+            background: linear-gradient(to right, #020617, #1e293b);
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .card h3 {
+            color: #38bdf8;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #020617;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>CyberSec Shop</h1>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Produkte</a>
+        <a href="#">Über uns</a>
+        <a href="#">Kontakt</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h2>Cybersecurity Tools & Lernkits</h2>
+    <p>Für Ausbildung, Forschung und ethisches Hacking</p>
+</section>
+
+<section class="products">
+    <div class="card">
+        <h3>ESP32 Dev Kit</h3>
+        <p>Vielseitiges Board für IoT- und Security-Projekte.</p>
+    </div>
+
+    <div class="card">
+        <h3>RF Analyse Kit</h3>
+        <p>Werkzeuge zur Untersuchung von Funkkommunikation.</p>
+    </div>
+
+    <div class="card">
+        <h3>Penetration Testing Lab</h3>
+        <p>Virtuelle Umgebung zum sicheren Lernen von Security-Techniken.</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 CyberSec Shop</p>
+    <p>Alle Produkte nur für legale und ethische Nutzung bestimmt.</p>
+</footer>
+
+</body>
+</html>
