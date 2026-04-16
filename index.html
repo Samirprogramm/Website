@@ -1,285 +1,281 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CyberSec — Research & Tools</title>
-
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <style>
-:root {
-    --bg: #0d0d0f;
-    --card: #16161a;
-    --text: #eaeaea;
-    --muted: #9ca3af;
-    --border: #26262b;
-    --accent: #4ade80;
+:root{
+  --bg:#0f1113; --surface:#16161a; --muted:#9ca3af; --text:#e6e6e6; --accent:#4ade80;
+  --danger:#ef4444; --radius:10px; --maxw:1100px;
 }
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); margin:0; line-height:1.5; -webkit-font-smoothing:antialiased;}
+.container{max-width:var(--maxw); margin:28px auto; padding:16px;}
+.grid{display:grid; grid-template-columns:260px 1fr; gap:24px;}
+@media (max-width:900px){ .grid{grid-template-columns:1fr} .sidebar{border-right:none;border-bottom:1px solid #222;padding-bottom:16px}}
+.sidebar{padding:22px;border-right:1px solid #222; height:100%}
+.logo{font-weight:800;font-size:1.15rem;margin-bottom:18px}
+.nav a{display:block;color:var(--muted);text-decoration:none;margin:10px 0;padding:6px;border-radius:8px}
+.nav a:hover{color:var(--text); background:rgba(255,255,255,0.02)}
+.hero h1{font-size:2rem;margin:0 0 6px}
+.hero p{color:var(--muted);margin:0 0 18px}
+.card{background:var(--surface);border:1px solid #222;padding:18px;border-radius:var(--radius)}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media (max-width:900px){ .products{grid-template-columns:1fr} }
+.product{padding:14px;border-radius:10px;border:1px solid #222;display:flex;flex-direction:column;gap:10px}
+.product h4{margin:0}
+.price{color:var(--accent);font-weight:700}
+.btn{background:var(--accent);color:#06140a;border:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn.ghost{background:transparent;border:1px solid #2a2a2a;color:var(--muted)}
+.cart{position:sticky;top:24px}
+.cart h3{margin:0 0 8px}
+.cart-list{list-style:none;padding:0;margin:0;max-height:260px;overflow:auto}
+.cart-list li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #1a1a1a}
+.small{font-size:0.9rem;color:var(--muted)}
+.meta{color:var(--muted);font-size:0.9rem}
+.tags span{font-size:12px;color:var(--muted);border:1px solid #222;padding:4px 8px;border-radius:6px;margin-right:6px}
+.footer{color:var(--muted);margin-top:28px;font-size:0.9rem;text-align:center}
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Inter, system-ui;
-    background: var(--bg);
-    color: var(--text);
-}
-
-/* LAYOUT */
-.wrapper {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    max-width: 1100px;
-    margin: auto;
-}
-
-/* SIDEBAR */
-.sidebar {
-    padding: 30px 20px;
-    border-right: 1px solid var(--border);
-    height: 100vh;
-    position: sticky;
-    top: 0;
-}
-
-.logo {
-    font-weight: bold;
-    margin-bottom: 40px;
-}
-
-.sidebar a {
-    display: block;
-    color: var(--muted);
-    text-decoration: none;
-    margin-bottom: 10px;
-}
-
-.sidebar a:hover {
-    color: white;
-}
-
-/* CONTENT */
-.content {
-    padding: 40px;
-}
-
-/* HERO */
-.hero {
-    margin-bottom: 50px;
-}
-
-.hero h1 {
-    font-size: 38px;
-    margin-bottom: 10px;
-}
-
-.hero p {
-    color: var(--muted);
-}
-
-/* POST LIST */
-.post {
-    padding: 25px 0;
-    border-bottom: 1px solid var(--border);
-    transition: 0.2s;
-}
-
-.post:hover {
-    transform: translateX(5px);
-}
-
-.post h2 {
-    margin-bottom: 5px;
-}
-
-.meta {
-    font-size: 14px;
-    color: var(--muted);
-}
-
-/* TAGS */
-.tags span {
-    font-size: 12px;
-    border: 1px solid var(--border);
-    padding: 3px 8px;
-    margin-right: 5px;
-    color: var(--muted);
-}
-
-/* PRODUCT INLINE */
-.product {
-    margin-top: 15px;
-    padding: 15px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-}
-
-.product:hover {
-    border-color: var(--accent);
-}
-
-.price {
-    color: var(--accent);
-}
-
-/* BUTTON */
-.btn {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: var(--accent);
-    border: none;
-    cursor: pointer;
-}
-
-/* FOOTER */
-footer {
-    margin-top: 60px;
-    color: var(--muted);
-    font-size: 14px;
-}
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:40}
+.modal{background:var(--surface);padding:20px;border-radius:12px;border:1px solid #222;max-width:420px;width:90%}
+.qr{display:flex;flex-direction:column;align-items:center;gap:12px}
+.qr img{width:220px;height:220px;object-fit:contain;background:#fff;padding:8px;border-radius:8px}
+.close{background:transparent;border:1px solid #2a2a2a;color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
+.toast{position:fixed;right:20px;bottom:20px;background:#0b0b0b;border:1px solid #222;padding:10px 14px;border-radius:8px;color:var(--muted)}
 </style>
 </head>
-
 <body>
+<div class="container">
+  <div class="grid">
+    <aside class="sidebar card">
+      <div class="logo">CyberSec</div>
+      <nav class="nav">
+        <a href="#">Blog</a>
+        <a href="#">Research</a>
+        <a href="#">Tools</a>
+        <a href="#">Shop</a>
+      </nav>
+      <div style="margin-top:14px" class="small">Minimal • Fast • Secure</div>
+    </aside>
 
-<div class="wrapper">
+    <main>
+      <section class="hero">
+        <h1>Cybersecurity Research</h1>
+        <p>Blog, Tools und Hardware für Ethical Hacking</p>
+      </section>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="logo">CyberSec</div>
+      <section class="card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <strong>Neueste Produkte</strong>
+            <div class="small meta">Sorgfältig ausgewählt für Security Enthusiasten</div>
+          </div>
+          <div><button id="clear-cart" class="btn ghost">Warenkorb leeren</button></div>
+        </div>
+        <div class="products" id="products"></div>
+      </section>
 
-    <a href="#">Blog</a>
-    <a href="#">Research</a>
-    <a href="#">Tools</a>
-    <a href="#">Shop</a>
+      <section class="card">
+        <h2>Blog & Guides</h2>
 
-    <br>
-    <small style="color: gray;">Minimal • Fast • Secure</small>
+        <article class="post" style="margin-top:12px">
+          <h3>ESP32 Security Guide</h3>
+          <div class="meta">April 2026 • 6 min read</div>
+          <div class="tags" style="margin:8px 0"><span>IoT</span><span>Hardware</span></div>
+          <p>Ein moderner Einstieg in IoT Security und Testing.</p>
+        </article>
+
+        <article class="post" style="margin-top:12px">
+          <h3>WiFi Network Analysis</h3>
+          <div class="meta">April 2026 • 8 min read</div>
+          <div class="tags" style="margin:8px 0"><span>WiFi</span><span>Networking</span></div>
+          <p>Grundlagen für sichere Netzwerkanalyse.</p>
+        </article>
+
+        <article class="post" style="margin-top:12px">
+          <h3>Build your Pentesting Lab</h3>
+          <div class="meta">April 2026 • 10 min read</div>
+          <div class="tags" style="margin:8px 0"><span>Lab</span><span>Security</span></div>
+          <p>Erstelle dein eigenes Ethical Hacking Lab.</p>
+        </article>
+      </section>
+
+      <div style="height:18px"></div>
+      <footer class="footer">© 2026 CyberSec</footer>
+    </main>
+
+    <!-- Cart Column -->
+    <aside class="cart card" style="width:320px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Warenkorb</h3>
+        <div class="small" id="count">0 Artikel</div>
+      </div>
+      <ul class="cart-list" id="cart-items"></ul>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <div class="small">Zwischensumme</div>
+        <div class="price" id="subtotal">CHF 0.00</div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button id="checkout" class="btn" style="flex:1">Mit TWINT bezahlen</button>
+        <button id="checkout-card" class="btn ghost" style="flex:1">Karte</button>
+      </div>
+      <div style="margin-top:10px" class="small">Versand und Steuern werden beim Checkout berechnet</div>
+    </aside>
+  </div>
 </div>
 
-<!-- MAIN CONTENT -->
-<div class="content">
-
-<div class="hero">
-    <h1>Cybersecurity Research</h1>
-    <p>Blog, Tools und Hardware für Ethical Hacking</p>
-</div>
-
-<!-- POST -->
-<div class="post">
-    <h2>ESP32 Security Guide</h2>
-    <div class="meta">April 2026 • 6 min read</div>
-
-    <div class="tags">
-        <span>IoT</span>
-        <span>Hardware</span>
+<!-- Modal für QR / Redirect -->
+<div id="modal" class="modal-backdrop" role="dialog" aria-hidden="true">
+  <div class="modal" role="document">
+    <div id="modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>TWINT Zahlung</strong>
+        <button id="close-modal" class="close">Schliessen</button>
+      </div>
+      <div style="margin-top:12px" id="modal-body">
+        <div class="qr" id="qr-area">
+          <!-- QR wird hier eingefügt -->
+        </div>
+        <div class="small" style="margin-top:8px">Scanne den QR mit deiner TWINT App oder folge dem Link.</div>
+      </div>
     </div>
-
-    <p>Ein moderner Einstieg in IoT Security und Testing.</p>
-
-    <div class="product">
-        <strong>ESP32 Dev Kit</strong>
-        <div class="price">CHF 19.90</div>
-        <button class="btn">Kaufen</button>
-    </div>
+  </div>
 </div>
 
-<div class="post">
-    <h2>WiFi Network Analysis</h2>
-    <div class="meta">April 2026 • 8 min read</div>
-
-    <div class="tags">
-        <span>WiFi</span>
-        <span>Networking</span>
-    </div>
-
-    <p>Grundlagen für sichere Netzwerkanalyse.</p>
-
-    <div class="product">
-        <strong>WiFi Testing Kit</strong>
-        <div class="price">CHF 49.90</div>
-        <button class="btn">Kaufen</button>
-    </div>
-</div>
-
-<div class="post">
-    <h2>Build your Pentesting Lab</h2>
-    <div class="meta">April 2026 • 10 min read</div>
-
-    <div class="tags">
-        <span>Lab</span>
-        <span>Security</span>
-    </div>
-
-    <p>Erstelle dein eigenes Ethical Hacking Lab.</p>
-
-    <div class="product">
-        <strong>Pentesting Lab</strong>
-        <div class="price">CHF 29.90</div>
-        <button class="btn">Kaufen</button>
-    </div>
-</div>
-
-<footer>
-    <p>© 2026 CyberSec</p>
-</footer>
-
-</div>
-</div>
-
-</body>
-</html>
-<!-- Ausschnitt: Warenkorb + Checkout -->
-<div id="app" class="container">
-  <aside class="sidebar card"> ... </aside>
-  <main>
-    <section class="products"></section>
-    <div class="cart card" id="cart">
-      <h3>Warenkorb</h3>
-      <ul id="cart-items"></ul>
-      <div><strong>Summe:</strong> <span id="total">CHF 0.00</span></div>
-      <button id="checkout" class="btn">Mit TWINT bezahlen</button>
-    </div>
-  </main>
-</div>
+<div id="toast" class="toast" style="display:none"></div>
 
 <script>
+/* Produkte initial (kombiniert mit deinem Inhalt) */
 const products = [
-  {id:1,title:'ESP32 Dev Kit',price:19.9},
-  {id:2,title:'WiFi Testing Kit',price:49.9},
+  {id:1, title:'ESP32 Dev Kit', price:19.90, desc:'ESP32 Dev Kit für IoT Projekte'},
+  {id:2, title:'WiFi Testing Kit', price:49.90, desc:'Tools für WiFi Analyse'},
+  {id:3, title:'Pentesting Lab', price:29.90, desc:'Starter Kit für Pentesting Lab'}
 ];
-let cart = [];
+
+let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+
+function formatCHF(n){ return 'CHF ' + n.toFixed(2); }
+
 function renderProducts(){
-  const p = document.querySelector('.products');
-  products.forEach(prod=>{
-    const el = document.createElement('div');
-    el.className='card';
-    el.innerHTML=`<h4>${prod.title}</h4><div>CHF ${prod.price.toFixed(2)}</div>
-      <button onclick="add(${prod.id})" class="btn">In den Warenkorb</button>`;
-    p.appendChild(el);
+  const el = document.getElementById('products'); el.innerHTML='';
+  products.forEach(p=>{
+    const d = document.createElement('div'); d.className='product';
+    d.innerHTML = `<h4>${p.title}</h4><div class="small">${p.desc}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="price">${formatCHF(p.price)}</div>
+        <div>
+          <button class="btn" onclick="addToCart(${p.id})">In den Warenkorb</button>
+        </div>
+      </div>`;
+    el.appendChild(d);
   });
 }
-function add(id){ cart.push(products.find(p=>p.id===id)); updateCart(); }
+
+function saveCart(){ localStorage.setItem('cart', JSON.stringify(cart)); }
+
+function addToCart(id){
+  const prod = products.find(x=>x.id===id);
+  cart.push({...prod, uid:Date.now()+Math.random()});
+  saveCart(); updateCart();
+  showToast('Artikel hinzugefügt');
+}
+
+function removeFromCart(uid){
+  cart = cart.filter(i=>i.uid!==uid);
+  saveCart(); updateCart();
+}
+
+function clearCart(){
+  cart = []; saveCart(); updateCart();
+}
+
 function updateCart(){
   const list = document.getElementById('cart-items'); list.innerHTML='';
-  let total=0;
-  cart.forEach((it,i)=>{ total+=it.price; list.innerHTML+=`<li>${it.title} — CHF ${it.price.toFixed(2)} <button onclick="remove(${i})">x</button></li>`});
-  document.getElementById('total').textContent = 'CHF ' + total.toFixed(2);
-}
-function remove(i){ cart.splice(i,1); updateCart(); }
-document.getElementById('checkout').addEventListener('click', async ()=>{
-  if(cart.length===0) return alert('Warenkorb leer');
-  const res = await fetch('/create-payment', {
-    method:'POST', headers:{'content-type':'application/json'},
-    body: JSON.stringify({items:cart, currency:'CHF'})
+  let total = 0;
+  cart.forEach(item=>{
+    total += item.price;
+    const li = document.createElement('li');
+    li.innerHTML = `<div style="flex:1"><strong>${item.title}</strong><div class="small">${formatCHF(item.price)}</div></div>
+      <div style="margin-left:12px"><button class="close" onclick='removeFromCart("${item.uid}")'>Entfernen</button></div>`;
+    list.appendChild(li);
   });
-  const data = await res.json();
-  if(data.redirectUrl) window.location = data.redirectUrl;
-  else if(data.qr) showQrModal(data.qr);
+  document.getElementById('subtotal').textContent = formatCHF(total);
+  document.getElementById('count').textContent = `${cart.length} Artikel`;
+}
+
+function showToast(msg, time=2000){
+  const t = document.getElementById('toast'); t.textContent = msg; t.style.display='block';
+  setTimeout(()=> t.style.display='none', time);
+}
+
+/* Modal */
+function openModal(){ document.getElementById('modal').style.display='flex'; document.getElementById('modal').setAttribute('aria-hidden','false'); }
+function closeModal(){ document.getElementById('modal').style.display='none'; document.getElementById('modal').setAttribute('aria-hidden','true'); }
+
+document.getElementById('close-modal').addEventListener('click', closeModal);
+document.getElementById('clear-cart').addEventListener('click', ()=>{ if(confirm('Warenkorb wirklich leeren?')) clearCart(); });
+
+/* Checkout */
+document.getElementById('checkout').addEventListener('click', async ()=>{
+  if(cart.length===0){ alert('Warenkorb ist leer'); return; }
+  // Sende Bestellung an Backend
+  try{
+    const res = await fetch('/create-payment', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({items:cart, currency:'CHF', method:'twint'})
+    });
+    const data = await res.json();
+    if(data.error){ alert('Fehler: ' + data.error); return; }
+
+    // Wenn PSP Redirect URL liefert
+    if(data.redirectUrl){
+      // Optional: öffne in neuem Tab oder redirect
+      window.location.href = data.redirectUrl;
+      return;
+    }
+
+    // Wenn PSP QR liefert (Base64 oder URL)
+    if(data.qrImage){
+      const qrArea = document.getElementById('qr-area');
+      qrArea.innerHTML = `<img alt="TWINT QR" src="${data.qrImage}"><a class="small" href="${data.paymentUrl}" target="_blank">Zahlung öffnen</a>`;
+      openModal();
+      pollPaymentStatus(data.paymentId);
+      return;
+    }
+
+    // Fallback
+    alert('Zahlungsanforderung erstellt. Folge den Anweisungen.');
+  }catch(err){
+    console.error(err); alert('Netzwerkfehler beim Erstellen der Zahlung.');
+  }
 });
+
+/* Polling für Demo: prüft /payment-status */
+async function pollPaymentStatus(paymentId){
+  const interval = setInterval(async ()=>{
+    try{
+      const r = await fetch('/payment-status?paymentId=' + encodeURIComponent(paymentId));
+      const j = await r.json();
+      if(j.status === 'paid'){
+        clearInterval(interval);
+        closeModal();
+        clearCart();
+        showToast('Zahlung erhalten. Danke!');
+      } else if(j.status === 'failed'){
+        clearInterval(interval);
+        showToast('Zahlung fehlgeschlagen', 4000);
+      }
+    }catch(e){ console.error(e); }
+  }, 3000);
+}
+
+/* Init */
 renderProducts();
+updateCart();
 </script>
+</body>
+</html>
