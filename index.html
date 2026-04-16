@@ -233,3 +233,53 @@ footer {
 
 </body>
 </html>
+<!-- Ausschnitt: Warenkorb + Checkout -->
+<div id="app" class="container">
+  <aside class="sidebar card"> ... </aside>
+  <main>
+    <section class="products"></section>
+    <div class="cart card" id="cart">
+      <h3>Warenkorb</h3>
+      <ul id="cart-items"></ul>
+      <div><strong>Summe:</strong> <span id="total">CHF 0.00</span></div>
+      <button id="checkout" class="btn">Mit TWINT bezahlen</button>
+    </div>
+  </main>
+</div>
+
+<script>
+const products = [
+  {id:1,title:'ESP32 Dev Kit',price:19.9},
+  {id:2,title:'WiFi Testing Kit',price:49.9},
+];
+let cart = [];
+function renderProducts(){
+  const p = document.querySelector('.products');
+  products.forEach(prod=>{
+    const el = document.createElement('div');
+    el.className='card';
+    el.innerHTML=`<h4>${prod.title}</h4><div>CHF ${prod.price.toFixed(2)}</div>
+      <button onclick="add(${prod.id})" class="btn">In den Warenkorb</button>`;
+    p.appendChild(el);
+  });
+}
+function add(id){ cart.push(products.find(p=>p.id===id)); updateCart(); }
+function updateCart(){
+  const list = document.getElementById('cart-items'); list.innerHTML='';
+  let total=0;
+  cart.forEach((it,i)=>{ total+=it.price; list.innerHTML+=`<li>${it.title} — CHF ${it.price.toFixed(2)} <button onclick="remove(${i})">x</button></li>`});
+  document.getElementById('total').textContent = 'CHF ' + total.toFixed(2);
+}
+function remove(i){ cart.splice(i,1); updateCart(); }
+document.getElementById('checkout').addEventListener('click', async ()=>{
+  if(cart.length===0) return alert('Warenkorb leer');
+  const res = await fetch('/create-payment', {
+    method:'POST', headers:{'content-type':'application/json'},
+    body: JSON.stringify({items:cart, currency:'CHF'})
+  });
+  const data = await res.json();
+  if(data.redirectUrl) window.location = data.redirectUrl;
+  else if(data.qr) showQrModal(data.qr);
+});
+renderProducts();
+</script>
