@@ -1,90 +1,190 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSec Shop</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-        }
-        header {
-            background: #020617;
-            padding: 20px;
-            text-align: center;
-        }
-        nav a {
-            color: #38bdf8;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-        .hero {
-            padding: 60px;
-            text-align: center;
-            background: linear-gradient(to right, #020617, #1e293b);
-        }
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 40px;
-        }
-        .card {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .card h3 {
-            color: #38bdf8;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #020617;
-            font-size: 14px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberSec Shop</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    background: #020617;
+    color: #e2e8f0;
+}
+
+/* NAVBAR */
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(2,6,23,0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    color: #38bdf8;
+    font-size: 20px;
+}
+
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #94a3b8;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #38bdf8;
+}
+
+/* HERO */
+.hero {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #0f172a, #020617);
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 48px;
+    color: #38bdf8;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    color: #94a3b8;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    background: #38bdf8;
+    border: none;
+    color: black;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #0ea5e9;
+}
+
+/* PRODUCTS */
+.products {
+    padding: 60px 40px;
+}
+
+.products h2 {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    border-color: #38bdf8;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
+
+.price {
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.card button {
+    width: 100%;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid #1e293b;
+    margin-top: 40px;
+    color: #64748b;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-    <h1>CyberSec Shop</h1>
+    <div class="logo">CyberSec</div>
     <nav>
         <a href="#">Home</a>
-        <a href="#">Produkte</a>
-        <a href="#">Über uns</a>
+        <a href="#">Shop</a>
+        <a href="#">Labs</a>
         <a href="#">Kontakt</a>
     </nav>
 </header>
 
 <section class="hero">
-    <h2>Cybersecurity Tools & Lernkits</h2>
-    <p>Für Ausbildung, Forschung und ethisches Hacking</p>
+    <h1>Cybersecurity Tools</h1>
+    <p>Hardware, Labs & Education für Ethical Hacker</p>
+    <button class="btn">Jetzt entdecken</button>
 </section>
 
 <section class="products">
-    <div class="card">
-        <h3>ESP32 Dev Kit</h3>
-        <p>Vielseitiges Board für IoT- und Security-Projekte.</p>
-    </div>
+    <h2>Unsere Produkte</h2>
 
-    <div class="card">
-        <h3>RF Analyse Kit</h3>
-        <p>Werkzeuge zur Untersuchung von Funkkommunikation.</p>
-    </div>
+    <div class="grid">
+        <div class="card">
+            <h3>ESP32 Dev Board</h3>
+            <p>Perfekt für IoT & Security Research</p>
+            <div class="price">CHF 19.90</div>
+            <button class="btn">In den Warenkorb</button>
+        </div>
 
-    <div class="card">
-        <h3>Penetration Testing Lab</h3>
-        <p>Virtuelle Umgebung zum sicheren Lernen von Security-Techniken.</p>
+        <div class="card">
+            <h3>WiFi Testing Kit</h3>
+            <p>Für Analyse & Schulungsumgebungen</p>
+            <div class="price">CHF 49.90</div>
+            <button class="btn">In den Warenkorb</button>
+        </div>
+
+        <div class="card">
+            <h3>Pentesting Lab</h3>
+            <p>Virtuelle Trainingsumgebung</p>
+            <div class="price">CHF 29.90</div>
+            <button class="btn">In den Warenkorb</button>
+        </div>
     </div>
 </section>
 
 <footer>
     <p>© 2026 CyberSec Shop</p>
-    <p>Alle Produkte nur für legale und ethische Nutzung bestimmt.</p>
+    <p>Nur für legale Nutzung & Ausbildung bestimmt</p>
 </footer>
 
 </body>
