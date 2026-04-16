@@ -10,12 +10,12 @@
    GLOBAL DESIGN SYSTEM
 --------------------------------*/
 :root {
-    --bg: #0b0d10;
-    --card: #13161a;
-    --text: #e8e8e8;
-    --muted: #9aa0a6;
-    --accent: #4ade80;
-    --accent-dark: #2bbf63;
+    --bg: #0a0c0f;
+    --card: #111418;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #3b82f6;        /* Professionelles Blau */
+    --accent-dark: #2563eb;
     --border: #1f2429;
     --radius: 12px;
     --shadow: 0 8px 30px rgba(0,0,0,0.45);
@@ -56,13 +56,13 @@ body {
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
-    height: fit-content;
 }
 
 .logo {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
     margin-bottom: 25px;
+    letter-spacing: 1px;
 }
 
 .sidebar a {
@@ -74,7 +74,7 @@ body {
 }
 
 .sidebar a:hover {
-    color: var(--text);
+    color: var(--accent);
 }
 
 /* ------------------------------
@@ -88,20 +88,20 @@ body {
 
 .hero {
     background: var(--card);
-    padding: 35px;
+    padding: 40px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
 }
 
 .hero h1 {
-    font-size: 36px;
+    font-size: 40px;
     margin-bottom: 10px;
 }
 
 .hero p {
     color: var(--muted);
-    font-size: 17px;
+    font-size: 18px;
 }
 
 /* ------------------------------
@@ -115,15 +115,16 @@ body {
 
 .product {
     background: var(--card);
-    padding: 20px;
+    padding: 22px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    transition: 0.2s;
+    transition: 0.25s;
 }
 
 .product:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
     border-color: var(--accent);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.55);
 }
 
 .product h3 {
@@ -137,15 +138,16 @@ body {
 }
 
 .btn {
-    margin-top: 12px;
-    padding: 10px 14px;
+    margin-top: 14px;
+    padding: 12px 14px;
     background: var(--accent);
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    color: #0d0d0d;
+    color: white;
     width: 100%;
+    font-size: 15px;
 }
 
 .btn:hover {
@@ -161,7 +163,6 @@ body {
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
-    height: fit-content;
 }
 
 .cart h2 {
@@ -171,7 +172,7 @@ body {
 .cart-item {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 12px 0;
     border-bottom: 1px solid var(--border);
 }
 
