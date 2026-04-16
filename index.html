@@ -4,26 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CyberSec – Blog & Research</title>
-
-<meta name="description" content="Cybersecurity Blog, Tools & Research">
-<meta property="og:title" content="CyberSec">
-<meta property="og:description" content="Minimal Cybersecurity Blog & Shop">
+<title>CyberSec — Research & Tools</title>
 
 <style>
 :root {
-    --bg: #0b0b0c;
-    --text: #e7e7e7;
+    --bg: #0d0d0f;
+    --card: #16161a;
+    --text: #eaeaea;
     --muted: #9ca3af;
-    --border: #1f2937;
-    --accent: #22c55e;
-}
-
-body.light {
-    --bg: #ffffff;
-    --text: #111;
-    --muted: #555;
-    --border: #e5e7eb;
+    --border: #26262b;
+    --accent: #4ade80;
 }
 
 * {
@@ -33,44 +23,56 @@ body.light {
 }
 
 body {
-    font-family: ui-sans-serif, system-ui;
+    font-family: Inter, system-ui;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.7;
-    transition: 0.3s;
 }
 
-.container {
-    max-width: 720px;
+/* LAYOUT */
+.wrapper {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1100px;
     margin: auto;
-    padding: 20px;
 }
 
-/* HEADER */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 60px;
+/* SIDEBAR */
+.sidebar {
+    padding: 30px 20px;
+    border-right: 1px solid var(--border);
+    height: 100vh;
+    position: sticky;
+    top: 0;
 }
 
 .logo {
     font-weight: bold;
+    margin-bottom: 40px;
 }
 
-nav a {
-    margin-left: 15px;
-    text-decoration: none;
+.sidebar a {
+    display: block;
     color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 10px;
 }
 
-nav a:hover {
-    color: var(--text);
+.sidebar a:hover {
+    color: white;
+}
+
+/* CONTENT */
+.content {
+    padding: 40px;
 }
 
 /* HERO */
+.hero {
+    margin-bottom: 50px;
+}
+
 .hero h1 {
-    font-size: 42px;
+    font-size: 38px;
     margin-bottom: 10px;
 }
 
@@ -78,29 +80,46 @@ nav a:hover {
     color: var(--muted);
 }
 
-/* POSTS */
+/* POST LIST */
 .post {
-    margin-top: 50px;
-    padding-bottom: 25px;
+    padding: 25px 0;
     border-bottom: 1px solid var(--border);
+    transition: 0.2s;
+}
+
+.post:hover {
+    transform: translateX(5px);
 }
 
 .post h2 {
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .meta {
     font-size: 14px;
     color: var(--muted);
-    margin-bottom: 10px;
+}
+
+/* TAGS */
+.tags span {
+    font-size: 12px;
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    margin-right: 5px;
+    color: var(--muted);
 }
 
 /* PRODUCT INLINE */
 .product {
     margin-top: 15px;
     padding: 15px;
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: 6px;
+}
+
+.product:hover {
+    border-color: var(--accent);
 }
 
 .price {
@@ -110,55 +129,57 @@ nav a:hover {
 /* BUTTON */
 .btn {
     margin-top: 10px;
-    padding: 6px 12px;
-    border: none;
+    padding: 8px 12px;
     background: var(--accent);
-    color: black;
+    border: none;
     cursor: pointer;
 }
 
 /* FOOTER */
 footer {
-    margin-top: 80px;
-    font-size: 14px;
+    margin-top: 60px;
     color: var(--muted);
-}
-
-/* TOGGLE */
-.toggle {
-    cursor: pointer;
-    border: 1px solid var(--border);
-    padding: 5px 10px;
+    font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrapper">
 
-<header>
+<!-- SIDEBAR -->
+<div class="sidebar">
     <div class="logo">CyberSec</div>
 
-    <nav>
-        <a href="#">Blog</a>
-        <a href="#">Research</a>
-        <a href="#">Shop</a>
-    </nav>
+    <a href="#">Blog</a>
+    <a href="#">Research</a>
+    <a href="#">Tools</a>
+    <a href="#">Shop</a>
 
-    <div class="toggle" onclick="toggleMode()">☀️ / 🌙</div>
-</header>
+    <br>
+    <small style="color: gray;">Minimal • Fast • Secure</small>
+</div>
 
-<section class="hero">
+<!-- MAIN CONTENT -->
+<div class="content">
+
+<div class="hero">
     <h1>Cybersecurity Research</h1>
-    <p>Minimal Blog über Security, Hardware & Ethical Hacking</p>
-</section>
+    <p>Blog, Tools und Hardware für Ethical Hacking</p>
+</div>
 
 <!-- POST -->
 <div class="post">
-    <h2>ESP32 Security Basics</h2>
-    <div class="meta">April 2026 • 5 min read</div>
-    <p>Ein Überblick über IoT Security und wie man sicher testet.</p>
+    <h2>ESP32 Security Guide</h2>
+    <div class="meta">April 2026 • 6 min read</div>
+
+    <div class="tags">
+        <span>IoT</span>
+        <span>Hardware</span>
+    </div>
+
+    <p>Ein moderner Einstieg in IoT Security und Testing.</p>
 
     <div class="product">
         <strong>ESP32 Dev Kit</strong>
@@ -169,7 +190,13 @@ footer {
 
 <div class="post">
     <h2>WiFi Network Analysis</h2>
-    <div class="meta">April 2026 • 7 min read</div>
+    <div class="meta">April 2026 • 8 min read</div>
+
+    <div class="tags">
+        <span>WiFi</span>
+        <span>Networking</span>
+    </div>
+
     <p>Grundlagen für sichere Netzwerkanalyse.</p>
 
     <div class="product">
@@ -180,9 +207,15 @@ footer {
 </div>
 
 <div class="post">
-    <h2>Build a Pentesting Lab</h2>
+    <h2>Build your Pentesting Lab</h2>
     <div class="meta">April 2026 • 10 min read</div>
-    <p>Dein eigenes Lab für Ethical Hacking.</p>
+
+    <div class="tags">
+        <span>Lab</span>
+        <span>Security</span>
+    </div>
+
+    <p>Erstelle dein eigenes Ethical Hacking Lab.</p>
 
     <div class="product">
         <strong>Pentesting Lab</strong>
@@ -193,16 +226,10 @@ footer {
 
 <footer>
     <p>© 2026 CyberSec</p>
-    <p>Minimal • Fast • Ethical</p>
 </footer>
 
 </div>
-
-<script>
-function toggleMode() {
-    document.body.classList.toggle("light");
-}
-</script>
+</div>
 
 </body>
 </html>
