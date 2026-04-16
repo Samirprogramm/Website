@@ -3,11 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CyberSec Shop</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<title>CyberSec – Blog & Research</title>
+
+<meta name="description" content="Cybersecurity Blog, Tools & Research">
+<meta property="og:title" content="CyberSec">
+<meta property="og:description" content="Minimal Cybersecurity Blog & Shop">
 
 <style>
+:root {
+    --bg: #0b0b0c;
+    --text: #e7e7e7;
+    --muted: #9ca3af;
+    --border: #1f2937;
+    --accent: #22c55e;
+}
+
+body.light {
+    --bg: #ffffff;
+    --text: #111;
+    --muted: #555;
+    --border: #e5e7eb;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -15,177 +33,176 @@
 }
 
 body {
-    font-family: 'Orbitron', sans-serif;
-    background: #020617;
-    color: #e2e8f0;
+    font-family: ui-sans-serif, system-ui;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    transition: 0.3s;
 }
 
-/* NAVBAR */
+.container {
+    max-width: 720px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* HEADER */
 header {
     display: flex;
     justify-content: space-between;
-    padding: 20px 40px;
-    background: rgba(2,6,23,0.8);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
+    align-items: center;
+    margin-bottom: 60px;
 }
 
 .logo {
-    color: #38bdf8;
-    font-size: 20px;
-}
-
-nav a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: #94a3b8;
-    transition: 0.3s;
-}
-
-nav a:hover {
-    color: #38bdf8;
-}
-
-/* HERO */
-.hero {
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: radial-gradient(circle at center, #0f172a, #020617);
-    text-align: center;
-}
-
-.hero h1 {
-    font-size: 48px;
-    color: #38bdf8;
-    margin-bottom: 20px;
-}
-
-.hero p {
-    color: #94a3b8;
-    margin-bottom: 30px;
-}
-
-.btn {
-    padding: 12px 25px;
-    background: #38bdf8;
-    border: none;
-    color: black;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-.btn:hover {
-    background: #0ea5e9;
-}
-
-/* PRODUCTS */
-.products {
-    padding: 60px 40px;
-}
-
-.products h2 {
-    margin-bottom: 40px;
-    text-align: center;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-}
-
-.card {
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    border-radius: 12px;
-    padding: 20px;
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    border-color: #38bdf8;
-}
-
-.card h3 {
-    margin-bottom: 10px;
-    color: #38bdf8;
-}
-
-.price {
-    margin: 10px 0;
     font-weight: bold;
 }
 
-.card button {
-    width: 100%;
+nav a {
+    margin-left: 15px;
+    text-decoration: none;
+    color: var(--muted);
+}
+
+nav a:hover {
+    color: var(--text);
+}
+
+/* HERO */
+.hero h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: var(--muted);
+}
+
+/* POSTS */
+.post {
+    margin-top: 50px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--border);
+}
+
+.post h2 {
+    margin-bottom: 8px;
+}
+
+.meta {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+/* PRODUCT INLINE */
+.product {
+    margin-top: 15px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.price {
+    color: var(--accent);
+}
+
+/* BUTTON */
+.btn {
+    margin-top: 10px;
+    padding: 6px 12px;
+    border: none;
+    background: var(--accent);
+    color: black;
+    cursor: pointer;
 }
 
 /* FOOTER */
 footer {
-    text-align: center;
-    padding: 30px;
-    border-top: 1px solid #1e293b;
-    margin-top: 40px;
-    color: #64748b;
+    margin-top: 80px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+/* TOGGLE */
+.toggle {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    padding: 5px 10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <header>
     <div class="logo">CyberSec</div>
+
     <nav>
-        <a href="#">Home</a>
+        <a href="#">Blog</a>
+        <a href="#">Research</a>
         <a href="#">Shop</a>
-        <a href="#">Labs</a>
-        <a href="#">Kontakt</a>
     </nav>
+
+    <div class="toggle" onclick="toggleMode()">☀️ / 🌙</div>
 </header>
 
 <section class="hero">
-    <h1>Cybersecurity Tools</h1>
-    <p>Hardware, Labs & Education für Ethical Hacker</p>
-    <button class="btn">Jetzt entdecken</button>
+    <h1>Cybersecurity Research</h1>
+    <p>Minimal Blog über Security, Hardware & Ethical Hacking</p>
 </section>
 
-<section class="products">
-    <h2>Unsere Produkte</h2>
+<!-- POST -->
+<div class="post">
+    <h2>ESP32 Security Basics</h2>
+    <div class="meta">April 2026 • 5 min read</div>
+    <p>Ein Überblick über IoT Security und wie man sicher testet.</p>
 
-    <div class="grid">
-        <div class="card">
-            <h3>ESP32 Dev Board</h3>
-            <p>Perfekt für IoT & Security Research</p>
-            <div class="price">CHF 19.90</div>
-            <button class="btn">In den Warenkorb</button>
-        </div>
-
-        <div class="card">
-            <h3>WiFi Testing Kit</h3>
-            <p>Für Analyse & Schulungsumgebungen</p>
-            <div class="price">CHF 49.90</div>
-            <button class="btn">In den Warenkorb</button>
-        </div>
-
-        <div class="card">
-            <h3>Pentesting Lab</h3>
-            <p>Virtuelle Trainingsumgebung</p>
-            <div class="price">CHF 29.90</div>
-            <button class="btn">In den Warenkorb</button>
-        </div>
+    <div class="product">
+        <strong>ESP32 Dev Kit</strong>
+        <div class="price">CHF 19.90</div>
+        <button class="btn">Kaufen</button>
     </div>
-</section>
+</div>
+
+<div class="post">
+    <h2>WiFi Network Analysis</h2>
+    <div class="meta">April 2026 • 7 min read</div>
+    <p>Grundlagen für sichere Netzwerkanalyse.</p>
+
+    <div class="product">
+        <strong>WiFi Testing Kit</strong>
+        <div class="price">CHF 49.90</div>
+        <button class="btn">Kaufen</button>
+    </div>
+</div>
+
+<div class="post">
+    <h2>Build a Pentesting Lab</h2>
+    <div class="meta">April 2026 • 10 min read</div>
+    <p>Dein eigenes Lab für Ethical Hacking.</p>
+
+    <div class="product">
+        <strong>Pentesting Lab</strong>
+        <div class="price">CHF 29.90</div>
+        <button class="btn">Kaufen</button>
+    </div>
+</div>
 
 <footer>
-    <p>© 2026 CyberSec Shop</p>
-    <p>Nur für legale Nutzung & Ausbildung bestimmt</p>
+    <p>© 2026 CyberSec</p>
+    <p>Minimal • Fast • Ethical</p>
 </footer>
+
+</div>
+
+<script>
+function toggleMode() {
+    document.body.classList.toggle("light");
+}
+</script>
 
 </body>
 </html>
