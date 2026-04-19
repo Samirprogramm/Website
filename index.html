@@ -74,9 +74,17 @@
     }
     .nav-links a {
       font-size: 0.88rem; font-weight: 500; color: var(--text-2);
-      transition: color 0.3s;
+      transition: color 0.3s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -6px; left: 0; right: 0;
+      height: 2px; border-radius: 2px;
+      background: var(--accent); transform: scaleX(0);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      transform-origin: center;
     }
     .nav-links a:hover { color: #fff; }
+    .nav-links a:hover::after { transform: scaleX(1); }
     .nav-btn {
       padding: 10px 26px; border-radius: 50px; font-weight: 600; font-size: 0.85rem;
       background: linear-gradient(135deg, var(--accent), #9333ea);
@@ -136,6 +144,15 @@
       font-size: 0.78rem; color: var(--accent-light); font-weight: 600;
       margin-bottom: 32px;
       animation: fadeUp 0.6s ease both;
+      position: relative; overflow: hidden;
+    }
+    .hero-badge::after {
+      content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { left: -100%; } 100% { left: 200%; }
     }
     .hero-badge .dot {
       width: 8px; height: 8px; background: var(--green); border-radius: 50%;
@@ -350,8 +367,14 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 1.4rem; margin-bottom: 22px;
       background: rgba(124,92,252,0.08); border: 1px solid rgba(124,92,252,0.15);
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
     }
-    .feat h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .feat:hover .feat-icon {
+      transform: scale(1.12) rotate(-5deg);
+      box-shadow: 0 0 28px rgba(124,92,252,0.2);
+    }
+    .feat h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; transition: color 0.3s; }
+    .feat:hover h3 { color: var(--accent-light); }
     .feat p { font-size: 0.88rem; color: var(--text-2); line-height: 1.65; }
     .feat-chip {
       display: inline-block; margin-top: 16px; padding: 4px 12px;
@@ -372,39 +395,89 @@
       display: flex; justify-content: space-between; align-items: center;
       padding: 18px 24px;
       background: var(--surface); border-radius: 10px;
-      transition: all 0.3s;
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+      border-left: 2px solid transparent;
     }
-    .spec:hover { background: var(--surface-hover); }
+    .spec:hover {
+      background: var(--surface-hover);
+      border-left-color: var(--accent);
+      padding-left: 28px;
+    }
     .spec-k { font-weight: 600; font-size: 0.9rem; color: var(--text-2); }
     .spec-v { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; }
 
-    /* ===== USE CASES ===== */
-    .uses-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    /* ===== FEATURE CATEGORIES ===== */
+    .cat-block {
+      margin-bottom: 72px; position: relative;
+      --cat: var(--accent); --cat-glow: rgba(124,92,252,0.12);
+      --cat-bg: rgba(124,92,252,0.06); --cat-bdr: rgba(124,92,252,0.18);
     }
-    .use {
+    .cat-block:last-child { margin-bottom: 0; }
+    .cat-wireless { --cat: #7c5cfc; --cat-glow: rgba(124,92,252,0.12); --cat-bg: rgba(124,92,252,0.06); --cat-bdr: rgba(124,92,252,0.18); }
+    .cat-ir { --cat: #f472b6; --cat-glow: rgba(244,114,182,0.12); --cat-bg: rgba(244,114,182,0.06); --cat-bdr: rgba(244,114,182,0.18); }
+    .cat-apps { --cat: #22d3ee; --cat-glow: rgba(34,211,238,0.12); --cat-bg: rgba(34,211,238,0.06); --cat-bdr: rgba(34,211,238,0.18); }
+    .cat-games { --cat: #34d399; --cat-glow: rgba(52,211,153,0.12); --cat-bg: rgba(52,211,153,0.06); --cat-bdr: rgba(52,211,153,0.18); }
+    .cat-other { --cat: #fb923c; --cat-glow: rgba(251,146,60,0.12); --cat-bg: rgba(251,146,60,0.06); --cat-bdr: rgba(251,146,60,0.18); }
+    .cat-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 32px; padding-bottom: 20px; padding-left: 20px;
+      border-left: 3px solid var(--cat); position: relative;
+    }
+    .cat-header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px; background: linear-gradient(90deg, var(--cat-bdr), transparent 80%);
+    }
+    .cat-title { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+    .cat-count {
+      padding: 5px 16px; border-radius: 50px; font-size: 0.68rem;
+      font-weight: 700; font-family: var(--mono);
+      background: var(--cat-bg); border: 1px solid var(--cat-bdr);
+      color: var(--cat); letter-spacing: 0.04em;
+    }
+    .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .cat-card {
       background: var(--surface); border: 1px solid var(--glass-border);
-      border-radius: 20px; padding: 40px 32px;
-      transition: all 0.4s; position: relative; overflow: hidden;
+      border-radius: 20px; padding: 32px 26px;
+      transition: all 0.45s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
     }
-    .use:hover {
-      border-color: var(--accent);
-      transform: translateY(-6px);
-      box-shadow: 0 16px 48px rgba(124,92,252,0.08);
+    .cat-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 0%, var(--cat-glow), transparent 70%);
+      opacity: 0; transition: opacity 0.45s;
     }
-    .use-num {
-      font-family: var(--mono); font-size: 3rem; font-weight: 900;
-      line-height: 1;
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      margin-bottom: 20px; transition: all 0.3s;
+    .cat-card:hover {
+      border-color: var(--cat-bdr); transform: translateY(-8px);
+      box-shadow: 0 20px 60px var(--cat-glow), 0 0 0 1px var(--cat-bdr);
     }
-    .use:hover .use-num {
-      background: linear-gradient(180deg, var(--accent-light), transparent);
-      -webkit-background-clip: text; background-clip: text;
+    .cat-card:hover::before { opacity: 1; }
+    .cat-card-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; margin-bottom: 18px;
+      background: var(--cat-bg); border: 1px solid var(--cat-bdr);
+      transition: all 0.4s;
     }
-    .use h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 10px; }
-    .use p { font-size: 0.88rem; color: var(--text-2); line-height: 1.65; }
+    .cat-card:hover .cat-card-icon {
+      box-shadow: 0 0 28px var(--cat-glow); transform: scale(1.1);
+    }
+    .cat-card h3 {
+      font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; transition: color 0.3s;
+    }
+    .cat-card:hover h3 { color: var(--cat); }
+    .cat-card p { font-size: 0.82rem; color: var(--text-2); line-height: 1.65; }
+    .cat-card .edu-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 14px; padding: 5px 14px;
+      background: rgba(251,146,60,0.06); border: 1px solid rgba(251,146,60,0.18);
+      border-radius: 50px; font-size: 0.65rem; font-weight: 700;
+      color: var(--orange); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .cat-card.warn-card {
+      --cat: #fb923c; --cat-glow: rgba(251,146,60,0.12);
+      --cat-bg: rgba(251,146,60,0.06); --cat-bdr: rgba(251,146,60,0.18);
+      border-color: rgba(251,146,60,0.1);
+    }
 
     /* ===== GALLERY ===== */
     .gallery-grid {
@@ -417,24 +490,40 @@
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 14px;
       color: var(--text-3); font-size: 0.85rem; font-weight: 500;
-      transition: all 0.4s; min-height: 220px;
+      transition: all 0.5s cubic-bezier(0.4,0,0.2,1); min-height: 220px;
+      position: relative;
     }
-    .gal:hover { border-color: rgba(124,92,252,0.3); transform: scale(1.02); }
+    .gal::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(124,92,252,0.04), rgba(34,211,238,0.04));
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .gal:hover {
+      border-color: rgba(124,92,252,0.25); transform: scale(1.02) translateY(-4px);
+      box-shadow: 0 24px 60px rgba(124,92,252,0.08);
+    }
+    .gal:hover::before { opacity: 1; }
     .gal-1 { grid-column: span 7; }
     .gal-2 { grid-column: span 5; }
     .gal-3 { grid-column: span 5; }
     .gal-4 { grid-column: span 7; }
-    .gal-emoji { font-size: 2.5rem; }
+    .gal-emoji { font-size: 2.5rem; transition: transform 0.5s; }
+    .gal:hover .gal-emoji { transform: scale(1.15) rotate(-5deg); }
 
     /* ===== FAQ ===== */
     .faq-list { max-width: 740px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
     .faq-item {
       background: var(--surface); border: 1px solid var(--glass-border);
-      border-radius: 16px; overflow: hidden; transition: all 0.3s;
+      border-radius: 16px; overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
     }
-    .faq-item[open] { border-color: rgba(124,92,252,0.3); }
+    .faq-item:hover { border-color: rgba(124,92,252,0.15); }
+    .faq-item[open] {
+      border-color: rgba(124,92,252,0.3);
+      box-shadow: 0 8px 40px rgba(124,92,252,0.06);
+    }
     .faq-item summary {
-      padding: 22px 28px; font-weight: 600; font-size: 0.98rem;
+      padding: 24px 28px; font-weight: 600; font-size: 0.98rem;
       cursor: pointer; list-style: none;
       display: flex; justify-content: space-between; align-items: center;
       transition: color 0.3s;
@@ -442,21 +531,22 @@
     .faq-item summary::-webkit-details-marker { display: none; }
     .faq-item summary::after {
       content: '+'; font-size: 1.4rem; color: var(--text-3);
-      transition: all 0.3s; font-weight: 300;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1); font-weight: 300;
     }
-    .faq-item[open] summary::after { content: '−'; color: var(--accent-light); }
+    .faq-item[open] summary::after { content: '−'; color: var(--accent-light); transform: rotate(180deg); }
     .faq-item[open] summary { color: var(--accent-light); }
     .faq-body {
-      padding: 0 28px 22px;
-      font-size: 0.9rem; color: var(--text-2); line-height: 1.7;
+      padding: 0 28px 24px;
+      font-size: 0.9rem; color: var(--text-2); line-height: 1.75;
     }
 
     /* ===== CTA ===== */
     .cta-wrap {
       position: relative; border-radius: 32px; overflow: hidden;
-      background: linear-gradient(160deg, rgba(20,16,40,0.9), rgba(8,8,14,0.9));
+      background: linear-gradient(160deg, rgba(20,16,40,0.95), rgba(8,8,14,0.95));
       border: 1px solid rgba(124,92,252,0.15);
       padding: 100px 48px; text-align: center;
+      box-shadow: 0 0 120px rgba(124,92,252,0.06);
     }
     .cta-glow {
       position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
@@ -497,6 +587,11 @@
       background: rgba(251,146,60,0.03);
       border: 1px solid rgba(251,146,60,0.12);
       border-radius: 20px; text-align: center;
+      transition: all 0.4s;
+    }
+    .legal-box:hover {
+      border-color: rgba(251,146,60,0.2);
+      box-shadow: 0 8px 40px rgba(251,146,60,0.04);
     }
     .legal-box .legal-warn { font-size: 1.5rem; margin-bottom: 10px; }
     .legal-box h3 { font-size: 0.95rem; color: var(--orange); margin-bottom: 10px; }
@@ -526,14 +621,49 @@
       text-align: center; font-size: 0.78rem; color: var(--text-3);
     }
 
+    /* ===== SCROLL PROGRESS ===== */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
+      background: linear-gradient(90deg, var(--accent), var(--cyan), var(--pink));
+      width: 0%; transition: width 0.1s linear;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* ===== NOISE OVERLAY ===== */
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none; opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat; background-size: 256px 256px;
+    }
+
+    /* ===== SECTION DIVIDER ===== */
+    .section::before {
+      content: ''; display: block; width: 100%; max-width: 600px; height: 1px;
+      margin: 0 auto 140px; position: relative; top: 0;
+      background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+    }
+    .section:first-of-type::before { display: none; }
+
+    /* ===== TOTAL BADGE ===== */
+    .total-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 20px; padding: 8px 22px;
+      background: linear-gradient(135deg, rgba(124,92,252,0.06), rgba(34,211,238,0.04));
+      border: 1px solid rgba(124,92,252,0.15); border-radius: 50px;
+      font-family: var(--mono); font-size: 0.82rem; font-weight: 700;
+      color: var(--accent-light); letter-spacing: 0.02em;
+    }
+    .total-badge .count { color: #fff; }
+
     /* ===== ANIMATIONS ===== */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(32px); }
       to { opacity: 1; transform: translateY(0); }
     }
     [data-anim] {
-      opacity: 0; transform: translateY(40px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1), transform 0.65s cubic-bezier(0.4,0,0.2,1);
     }
     [data-anim].visible {
       opacity: 1; transform: translateY(0);
@@ -549,7 +679,7 @@
       .specs-wrap { grid-template-columns: 1fr; gap: 48px; }
       .specs-info .section-title, .specs-info .section-sub { text-align: center; }
       .specs-info .section-sub { margin: 0 auto; }
-      .uses-grid { grid-template-columns: repeat(2, 1fr); }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
     }
     @media (max-width: 768px) {
@@ -564,7 +694,7 @@
       }
       .hero { padding: 110px 0 60px; min-height: auto; }
       .features-grid { grid-template-columns: 1fr; }
-      .uses-grid { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: 1fr; }
       .gallery-grid { grid-template-columns: 1fr 1fr; }
       .gal-1, .gal-4 { grid-column: span 2; }
       .gal-2, .gal-3 { grid-column: span 1; }
@@ -587,6 +717,7 @@
 </head>
 <body>
 
+  <div class="scroll-progress" id="scrollProgress"></div>
   <canvas id="particleCanvas"></canvas>
 
   <!-- NAV -->
@@ -599,7 +730,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="#features">Features</a></li>
         <li><a href="#specs">Specs</a></li>
-        <li><a href="#uses">Use Cases</a></li>
+        <li><a href="#uses">All Features</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -727,22 +858,238 @@
     </div>
   </section>
 
-  <!-- USE CASES -->
+  <!-- ALL FEATURES -->
   <section class="section" id="uses">
     <div class="container">
       <div class="section-head">
-        <span class="tag">Use Cases</span>
-        <h2 class="section-title">What Can You <span class="grad">Do With It?</span></h2>
-        <p class="section-sub">From wireless research to home automation — Ducky V1 adapts to your workflow.</p>
+        <span class="tag">All Features</span>
+        <h2 class="section-title">Everything <span class="grad">Ducky V1 Can Do</span></h2>
+        <p class="section-sub">40+ features across wireless, IR, Bluetooth, built-in apps, games, and more — all in one device.</p>
+        <div class="total-badge"><span class="count">34</span> features &middot; <span class="count">5</span> categories</div>
       </div>
-      <div class="uses-grid">
-        <div class="use" data-anim><div class="use-num">01</div><h3>Signal Analysis</h3><p>Scan and decode Sub-GHz signals from IoT devices, weather stations, and smart home gadgets. Visualize waveforms in real-time.</p></div>
-        <div class="use" data-anim><div class="use-num">02</div><h3>Protocol Research</h3><p>Explore 2.4 GHz protocols with the NRF24 module. Analyze device pairing, discover communication patterns.</p></div>
-        <div class="use" data-anim><div class="use-num">03</div><h3>Network Scanning</h3><p>Discover networks, analyze access points, and test connectivity. Pair with your phone for remote operation.</p></div>
-        <div class="use" data-anim><div class="use-num">04</div><h3>IR Remote Control</h3><p>Learn, store, and replay infrared signals. Build a universal remote or automate your entire living room.</p></div>
-        <div class="use" data-anim><div class="use-num">05</div><h3>Firmware Hacking</h3><p>Open firmware means full control. Write custom apps, extend functionality, and share your creations.</p></div>
-        <div class="use" data-anim><div class="use-num">06</div><h3>Education &amp; CTF</h3><p>Learn RF fundamentals, wireless security concepts, and compete in hardware-focused CTF challenges.</p></div>
+
+      <!-- WIRELESS & RF -->
+      <div class="cat-block cat-wireless">
+        <div class="cat-header" data-anim>
+          <h3 class="cat-title">📡 Wireless &amp; RF</h3>
+          <span class="cat-count">10 FEATURES</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📲</div>
+            <h3>BLE Spam</h3>
+            <p>Flood devices with spoofed BLE signals. Choose Android, Windows, iOS, general devices, or all at once.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🔍</div>
+            <h3>Advanced BLE Scanner</h3>
+            <p>Deep BLE scanning with RSSI, service data, manufacturer data, and integrated OUI vendor lookups.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📶</div>
+            <h3>Advanced Wi-Fi Scanner</h3>
+            <p>Comprehensive 2.4 GHz scanning with channel distribution graphs, RSSI analysis, encryption detection, and live metrics.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📡</div>
+            <h3>Wi-Fi AP Spam</h3>
+            <p>Create hundreds of fake Wi-Fi networks easily, from custom names to rickrolls.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📴</div>
+            <h3>Deauth Testing</h3>
+            <p>Perform 2.4 GHz deauth attacks on controlled networks (note: for EU, this is not enabled).</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🛡️</div>
+            <h3>Deauth Attack Checker</h3>
+            <p>Scan for deauth attacks performed under the 2.4 GHz band. Monitor your network in real-time.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🌐</div>
+            <h3>Captive Portals</h3>
+            <p>Deploy custom captive portals instantly with the Ducky V1's Wi-Fi network.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">⌨️</div>
+            <h3>Bad-BT</h3>
+            <p>Emulate a Bluetooth keyboard like a USB Rubber Ducky, supporting Ducky scripts.</p>
+          </div>
+          <div class="cat-card warn-card" data-anim>
+            <div class="cat-card-icon">🔊</div>
+            <h3>RF Signal Jammer</h3>
+            <p>Jam RF signals across Sub-GHz bands for research and testing in controlled environments.</p>
+            <span class="edu-badge">⚠️ Educational purposes only</span>
+          </div>
+          <div class="cat-card warn-card" data-anim>
+            <div class="cat-card-icon">⚡</div>
+            <h3>NRF Jammer — 500 mW</h3>
+            <p>High-power 500 mW NRF24-based jammer for 2.4 GHz band research and interference testing.</p>
+            <span class="edu-badge">⚠️ Educational purposes only</span>
+          </div>
+        </div>
       </div>
+
+      <!-- INFRARED -->
+      <div class="cat-block cat-ir">
+        <div class="cat-header" data-anim>
+          <h3 class="cat-title">📺 Infrared (IR)</h3>
+          <span class="cat-count">4 FEATURES</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📺</div>
+            <h3>TV-B-Gone</h3>
+            <p>Turn off almost any TV with a single button press using a large IR code database.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🎛️</div>
+            <h3>Remote</h3>
+            <p>Replace your TV remote with customizable buttons and broad IR compatibility.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📡</div>
+            <h3>Receiver</h3>
+            <p>Detect and decode infrared signals from remotes and controllers.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📤</div>
+            <h3>Transmit App</h3>
+            <p>Send up to 8 IR commands across 5 remotes for precise control.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUILT-IN APPS -->
+      <div class="cat-block cat-apps">
+        <div class="cat-header" data-anim>
+          <h3 class="cat-title">🛠️ Built-in Apps</h3>
+          <span class="cat-count">7 FEATURES</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🦥</div>
+            <h3>Scroller</h3>
+            <p>Control short videos via BLE: scroll, pause, or like seamlessly.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📝</div>
+            <h3>TXT Viewer</h3>
+            <p>View text files with smooth scrolling and word wrapping.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">⌨️</div>
+            <h3>Mini Keypad</h3>
+            <p>Use the Ducky V1 as a customizable Bluetooth mini keypad.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🎵</div>
+            <h3>Media Controls</h3>
+            <p>Control media and system functions — play/pause, next/previous track, volume, and more.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🖥️</div>
+            <h3>PC Monitor</h3>
+            <p>Monitor CPU, GPU, and memory stats in real-time.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">⏱️</div>
+            <h3>Stopwatch</h3>
+            <p>Start, stop, and reset with precision.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">⏲️</div>
+            <h3>Timer</h3>
+            <p>Set fully customizable timers with flashing screen alerts.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAMES -->
+      <div class="cat-block cat-games">
+        <div class="cat-header" data-anim>
+          <h3 class="cat-title">🎮 Games</h3>
+          <span class="cat-count">6 FEATURES</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🐦</div>
+            <h3>Flappy Bird</h3>
+            <p>Tap to keep your bird flying and avoid pipes.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">👾</div>
+            <h3>Space Invaders</h3>
+            <p>Defend the galaxy by shooting down alien invaders.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🏓</div>
+            <h3>Pong</h3>
+            <p>Classic arcade game: battle the AI in Pong.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🧱</div>
+            <h3>Breakout</h3>
+            <p>Break bricks with a paddle and ball.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🦖</div>
+            <h3>T-Rex</h3>
+            <p>Jump and duck obstacles in the endless runner game.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🏎️</div>
+            <h3>Racer</h3>
+            <p>Navigate sharp turns and dodge obstacles at high speeds.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- OTHER FEATURES -->
+      <div class="cat-block cat-other">
+        <div class="cat-header" data-anim>
+          <h3 class="cat-title">⚙️ Other Features</h3>
+          <span class="cat-count">7 FEATURES</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">😊</div>
+            <h3>Easy &amp; Simple Setup</h3>
+            <p>Setup is very fast and effortless.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">⚙️</div>
+            <h3>Extra Settings Mode</h3>
+            <p>Fine-tune settings, Wi-Fi, BLE Spam delays, keypad configs, and much more.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🔄</div>
+            <h3>Auto Firmware Updates</h3>
+            <p>Automatic updates bring new features and improvements.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">🚨</div>
+            <h3>Emergency Mode</h3>
+            <p>Exit pentesting features instantly by launching Flappy Bird.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📊</div>
+            <h3>Signal Analytics</h3>
+            <p>Visualize RF activity with real-time line and bar graphs for network density and signal strength analysis.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">💾</div>
+            <h3>Storage Viewer</h3>
+            <p>Browse internal storage, inspect saved files, and analyze captured data directly on-device.</p>
+          </div>
+          <div class="cat-card" data-anim>
+            <div class="cat-card-icon">📀</div>
+            <h3>Screensavers</h3>
+            <p>Choose from Matrix, 3D cube, or the classic DVD screensaver!</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -838,7 +1185,7 @@
         </div>
         <div class="footer-col">
           <h4>Product</h4>
-          <ul><li><a href="#features">Features</a></li><li><a href="#specs">Specs</a></li><li><a href="#uses">Use Cases</a></li><li><a href="#buy">Buy</a></li></ul>
+          <ul><li><a href="#features">Features</a></li><li><a href="#specs">Specs</a></li><li><a href="#uses">All Features</a></li><li><a href="#buy">Buy</a></li></ul>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
@@ -909,17 +1256,36 @@
 
     // ===== NAV =====
     const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50), { passive: true });
+    const progressBar = document.getElementById('scrollProgress');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', scrollY > 50);
+      // Scroll progress
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      if (docH > 0) progressBar.style.width = (scrollY / docH * 100) + '%';
+    }, { passive: true });
 
     // ===== HAMBURGER =====
     const hb = document.getElementById('hamburger'), nl = document.getElementById('navLinks');
     hb.addEventListener('click', () => { hb.classList.toggle('open'); nl.classList.toggle('open'); });
     nl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { hb.classList.remove('open'); nl.classList.remove('open'); }));
 
-    // ===== SCROLL REVEAL =====
+    // ===== SCROLL REVEAL (STAGGERED) =====
     const obs = new IntersectionObserver(entries => {
-      entries.forEach((e, i) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 60); obs.unobserve(e.target); } });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Stagger cards within same parent grid
+          const parent = e.target.parentElement;
+          if (parent && parent.classList.contains('cat-grid')) {
+            const cards = [...parent.querySelectorAll('[data-anim]')];
+            const idx = cards.indexOf(e.target);
+            setTimeout(() => e.target.classList.add('visible'), idx * 80);
+          } else {
+            e.target.classList.add('visible');
+          }
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('[data-anim]').forEach(el => obs.observe(el));
 
     // ===== SMOOTH SCROLL =====
