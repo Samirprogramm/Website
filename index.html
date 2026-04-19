@@ -4,499 +4,932 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tech Ducky — Ducky V1</title>
-  <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #050508;
+      --bg-2: #0a0a10;
+      --surface: rgba(255,255,255,0.03);
+      --surface-hover: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --text: #f0f0f5;
+      --text-2: #a0a0b8;
+      --text-3: #5a5a72;
+      --accent: #7c5cfc;
+      --accent-light: #a78bfa;
+      --accent-glow: rgba(124, 92, 252, 0.4);
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --pink: #f472b6;
+      --orange: #fb923c;
+      --font: 'Inter', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== CANVAS BG ===== */
+    #particleCanvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+
+    /* ===== NAV ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 0;
+      transition: all 0.4s ease;
+    }
+    .nav.scrolled {
+      padding: 12px 0;
+      background: rgba(5,5,8,0.8);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.3rem;
+    }
+    .nav-logo .duck { font-size: 1.6rem; }
+    .nav-logo .highlight { color: var(--accent-light); }
+    .nav-links {
+      display: flex; list-style: none; gap: 36px;
+    }
+    .nav-links a {
+      font-size: 0.88rem; font-weight: 500; color: var(--text-2);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-btn {
+      padding: 10px 26px; border-radius: 50px; font-weight: 600; font-size: 0.85rem;
+      background: linear-gradient(135deg, var(--accent), #9333ea);
+      color: #fff; border: none; cursor: pointer;
+      transition: all 0.3s; font-family: var(--font);
+    }
+    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+    .nav-hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px; background: #fff;
+      border-radius: 2px; transition: all 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 140px 0 100px;
+      overflow: hidden;
+    }
+    .hero-orb {
+      position: absolute; border-radius: 50%; filter: blur(100px);
+      pointer-events: none; z-index: -1;
+    }
+    .hero-orb-1 {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(124,92,252,0.18), transparent 70%);
+      top: -200px; left: -200px;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .hero-orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(34,211,238,0.1), transparent 70%);
+      bottom: -150px; right: -100px;
+      animation: orbFloat 10s ease-in-out infinite reverse;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -20px); }
+    }
+    .hero .container {
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 80px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 7px 18px 7px 12px;
+      background: rgba(124,92,252,0.08);
+      border: 1px solid rgba(124,92,252,0.2);
+      border-radius: 50px;
+      font-size: 0.78rem; color: var(--accent-light); font-weight: 600;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge .dot {
+      width: 8px; height: 8px; background: var(--green); border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+    .hero-title {
+      font-size: clamp(3rem, 5.5vw, 4.5rem);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero-title .line { display: block; }
+    .hero-title .grad {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--cyan) 50%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: gradShift 4s ease-in-out infinite;
+    }
+    @keyframes gradShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .hero-sub {
+      font-size: 1.12rem; color: var(--text-2); line-height: 1.75;
+      max-width: 480px; margin-bottom: 40px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-btns {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 56px;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px; border-radius: 60px;
+      background: linear-gradient(135deg, var(--accent), #9333ea);
+      color: #fff; font-weight: 700; font-size: 1rem;
+      border: none; cursor: pointer; font-family: var(--font);
+      transition: all 0.3s;
+      box-shadow: 0 4px 24px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(124,92,252,0.5);
+    }
+    .btn-primary svg { transition: transform 0.3s; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 16px 36px; border-radius: 60px;
+      background: transparent; color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 600; font-size: 1rem; cursor: pointer;
+      font-family: var(--font); transition: all 0.3s;
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      background: rgba(124,92,252,0.06);
+      color: var(--accent-light);
+    }
+    .hero-metrics {
+      display: flex; gap: 40px;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .metric { display: flex; flex-direction: column; }
+    .metric-val {
+      font-size: 1.5rem; font-weight: 800; font-family: var(--mono);
+      background: linear-gradient(135deg, #fff, var(--text-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .metric-label {
+      font-size: 0.72rem; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;
+    }
+    .metric-sep {
+      width: 1px; background: rgba(255,255,255,0.08); align-self: stretch;
+    }
+
+    /* HERO DEVICE */
+    .hero-visual {
+      display: flex; justify-content: center; align-items: center;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+    .device-wrap {
+      position: relative; width: 420px; height: 420px;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .device-orbit {
+      position: absolute; border-radius: 50%;
+      border: 1px dashed rgba(124,92,252,0.12);
+    }
+    .device-orbit-1 { width: 400px; height: 400px; animation: rotate 40s linear infinite; }
+    .device-orbit-2 { width: 310px; height: 310px; animation: rotate 28s linear infinite reverse; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+
+    .device-orbit-1::after, .device-orbit-2::after {
+      content: ''; position: absolute; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--accent-light);
+      top: 0; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .device-card {
+      width: 200px; height: 260px;
+      background: linear-gradient(165deg, rgba(20,20,32,0.95), rgba(10,10,18,0.95));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px; padding: 18px;
+      display: flex; flex-direction: column; gap: 10px;
+      box-shadow: 0 0 80px rgba(124,92,252,0.12), 0 40px 80px rgba(0,0,0,0.5);
+      z-index: 5; position: relative;
+    }
+    .device-card::before {
+      content: ''; position: absolute; inset: -1px; border-radius: 24px;
+      background: linear-gradient(145deg, rgba(124,92,252,0.3), transparent 50%);
+      z-index: -1; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude; -webkit-mask-composite: xor;
+      padding: 1px;
+    }
+    .device-screen {
+      flex: 1; background: #080810; border-radius: 12px;
+      padding: 12px; font-family: var(--mono);
+      font-size: 0.58rem; line-height: 1.9; overflow: hidden;
+    }
+    .device-screen .ln { opacity: 0; animation: typeLine 0.4s ease forwards; }
+    .device-screen .ln:nth-child(1) { animation-delay: 0.8s; }
+    .device-screen .ln:nth-child(2) { animation-delay: 1.5s; }
+    .device-screen .ln:nth-child(3) { animation-delay: 2.2s; }
+    .device-screen .ln:nth-child(4) { animation-delay: 3.0s; }
+    .device-screen .ln:nth-child(5) { animation-delay: 3.7s; }
+    .device-screen .ln:nth-child(6) { animation-delay: 4.4s; }
+    .device-screen .ln:nth-child(7) { animation-delay: 5.1s; }
+    @keyframes typeLine { to { opacity: 1; } }
+    .device-screen .pr { color: var(--cyan); }
+    .device-screen .dim { color: var(--text-3); }
+    .device-screen .ok { color: var(--green); }
+    .device-screen .warn { color: var(--orange); }
+    .device-label {
+      text-align: center; font-family: var(--mono); font-size: 0.6rem;
+      font-weight: 700; color: var(--text-3); letter-spacing: 0.2em;
+    }
+    .chip {
+      position: absolute; padding: 10px 16px;
+      background: rgba(10,10,18,0.9);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px; font-size: 0.78rem; font-weight: 600;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      z-index: 6; white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: chipFloat 5s ease-in-out infinite;
+    }
+    .chip-icon { margin-right: 6px; }
+    .chip-1 { top: 30px; left: -30px; animation-delay: 0s; }
+    .chip-2 { top: 40px; right: -40px; animation-delay: 1.2s; }
+    .chip-3 { bottom: 50px; left: -20px; animation-delay: 2.4s; }
+    .chip-4 { bottom: 30px; right: -30px; animation-delay: 3.6s; }
+    @keyframes chipFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+
+    /* ===== SECTION SHARED ===== */
+    .section { position: relative; z-index: 1; padding: 140px 0; }
+    .section-head { text-align: center; margin-bottom: 72px; }
+    .tag {
+      display: inline-flex; padding: 6px 18px; margin-bottom: 20px;
+      border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      background: rgba(124,92,252,0.08); border: 1px solid rgba(124,92,252,0.2);
+      color: var(--accent-light);
+    }
+    .section-title {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 900; line-height: 1.12; letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+    .section-title .grad {
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .section-sub {
+      font-size: 1.05rem; color: var(--text-2); max-width: 540px;
+      margin: 0 auto; line-height: 1.7;
+    }
+
+    /* ===== FEATURES ===== */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    }
+    .feat {
+      background: var(--surface); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 36px 28px;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .feat::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(124,92,252,0.08), transparent 60%);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .feat:hover {
+      border-color: rgba(124,92,252,0.3);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(124,92,252,0.1);
+    }
+    .feat:hover::before { opacity: 1; }
+    .feat-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 22px;
+      background: rgba(124,92,252,0.08); border: 1px solid rgba(124,92,252,0.15);
+    }
+    .feat h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .feat p { font-size: 0.88rem; color: var(--text-2); line-height: 1.65; }
+    .feat-chip {
+      display: inline-block; margin-top: 16px; padding: 4px 12px;
+      background: rgba(124,92,252,0.06); border-radius: 50px;
+      font-family: var(--mono); font-size: 0.68rem; color: var(--accent-light);
+      font-weight: 600;
+    }
+
+    /* ===== SPECS ===== */
+    .specs-wrap {
+      display: grid; grid-template-columns: 1fr 1.3fr; gap: 72px; align-items: start;
+    }
+    .specs-info .tag { margin-bottom: 20px; }
+    .specs-info .section-title { text-align: left; }
+    .specs-info .section-sub { margin: 0; text-align: left; }
+    .specs-list { display: flex; flex-direction: column; gap: 3px; }
+    .spec {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 24px;
+      background: var(--surface); border-radius: 10px;
+      transition: all 0.3s;
+    }
+    .spec:hover { background: var(--surface-hover); }
+    .spec-k { font-weight: 600; font-size: 0.9rem; color: var(--text-2); }
+    .spec-v { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; }
+
+    /* ===== USE CASES ===== */
+    .uses-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .use {
+      background: var(--surface); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 40px 32px;
+      transition: all 0.4s; position: relative; overflow: hidden;
+    }
+    .use:hover {
+      border-color: var(--accent);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(124,92,252,0.08);
+    }
+    .use-num {
+      font-family: var(--mono); font-size: 3rem; font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 20px; transition: all 0.3s;
+    }
+    .use:hover .use-num {
+      background: linear-gradient(180deg, var(--accent-light), transparent);
+      -webkit-background-clip: text; background-clip: text;
+    }
+    .use h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 10px; }
+    .use p { font-size: 0.88rem; color: var(--text-2); line-height: 1.65; }
+
+    /* ===== GALLERY ===== */
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px;
+    }
+    .gal {
+      border-radius: 20px; overflow: hidden;
+      background: linear-gradient(145deg, rgba(15,15,24,0.8), rgba(8,8,14,0.8));
+      border: 1px solid var(--glass-border);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px;
+      color: var(--text-3); font-size: 0.85rem; font-weight: 500;
+      transition: all 0.4s; min-height: 220px;
+    }
+    .gal:hover { border-color: rgba(124,92,252,0.3); transform: scale(1.02); }
+    .gal-1 { grid-column: span 7; }
+    .gal-2 { grid-column: span 5; }
+    .gal-3 { grid-column: span 5; }
+    .gal-4 { grid-column: span 7; }
+    .gal-emoji { font-size: 2.5rem; }
+
+    /* ===== FAQ ===== */
+    .faq-list { max-width: 740px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    .faq-item {
+      background: var(--surface); border: 1px solid var(--glass-border);
+      border-radius: 16px; overflow: hidden; transition: all 0.3s;
+    }
+    .faq-item[open] { border-color: rgba(124,92,252,0.3); }
+    .faq-item summary {
+      padding: 22px 28px; font-weight: 600; font-size: 0.98rem;
+      cursor: pointer; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: color 0.3s;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: '+'; font-size: 1.4rem; color: var(--text-3);
+      transition: all 0.3s; font-weight: 300;
+    }
+    .faq-item[open] summary::after { content: '−'; color: var(--accent-light); }
+    .faq-item[open] summary { color: var(--accent-light); }
+    .faq-body {
+      padding: 0 28px 22px;
+      font-size: 0.9rem; color: var(--text-2); line-height: 1.7;
+    }
+
+    /* ===== CTA ===== */
+    .cta-wrap {
+      position: relative; border-radius: 32px; overflow: hidden;
+      background: linear-gradient(160deg, rgba(20,16,40,0.9), rgba(8,8,14,0.9));
+      border: 1px solid rgba(124,92,252,0.15);
+      padding: 100px 48px; text-align: center;
+    }
+    .cta-glow {
+      position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(124,92,252,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-glow-2 {
+      position: absolute; bottom: -30%; right: -10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(34,211,238,0.06), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-title {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 900; line-height: 1.12; margin-bottom: 18px;
+    }
+    .cta-desc {
+      font-size: 1.05rem; color: var(--text-2); max-width: 480px;
+      margin: 0 auto 40px; line-height: 1.7;
+    }
+    .cta-price { margin-bottom: 36px; }
+    .cta-price-val {
+      font-size: 4rem; font-weight: 900; font-family: var(--mono);
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .cta-price-note { display: block; font-size: 0.8rem; color: var(--text-3); margin-top: 4px; }
+    .cta-secure { margin-top: 20px; font-size: 0.8rem; color: var(--text-3); }
+
+    /* ===== LEGAL ===== */
+    .legal {
+      padding: 0 0 40px; position: relative; z-index: 1;
+    }
+    .legal-box {
+      max-width: 780px; margin: 0 auto; padding: 32px 36px;
+      background: rgba(251,146,60,0.03);
+      border: 1px solid rgba(251,146,60,0.12);
+      border-radius: 20px; text-align: center;
+    }
+    .legal-box .legal-warn { font-size: 1.5rem; margin-bottom: 10px; }
+    .legal-box h3 { font-size: 0.95rem; color: var(--orange); margin-bottom: 10px; }
+    .legal-box p { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; }
+    .legal-box strong { color: var(--text); }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      position: relative; z-index: 1;
+      padding: 64px 0 32px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 48px;
+    }
+    .footer-brand p { color: var(--text-3); font-size: 0.85rem; margin-top: 14px; max-width: 260px; line-height: 1.6; }
+    .footer-col h4 {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-2); margin-bottom: 18px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col a { font-size: 0.85rem; color: var(--text-3); transition: color 0.3s; }
+    .footer-col a:hover { color: var(--accent-light); }
+    .footer-bottom {
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05);
+      text-align: center; font-size: 0.78rem; color: var(--text-3);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    [data-anim] {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    [data-anim].visible {
+      opacity: 1; transform: translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .hero .container { grid-template-columns: 1fr; text-align: center; gap: 50px; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-btns { justify-content: center; }
+      .hero-metrics { justify-content: center; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .specs-wrap { grid-template-columns: 1fr; gap: 48px; }
+      .specs-info .section-title, .specs-info .section-sub { text-align: center; }
+      .specs-info .section-sub { margin: 0 auto; }
+      .uses-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-btn { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: rgba(5,5,8,0.95); backdrop-filter: blur(24px);
+        padding: 28px; gap: 22px;
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .hero { padding: 110px 0 60px; min-height: auto; }
+      .features-grid { grid-template-columns: 1fr; }
+      .uses-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gal-1, .gal-4 { grid-column: span 2; }
+      .gal-2, .gal-3 { grid-column: span 1; }
+      .device-wrap { width: 320px; height: 320px; }
+      .device-orbit-1 { width: 300px; height: 300px; }
+      .device-orbit-2 { width: 240px; height: 240px; }
+      .device-card { width: 160px; height: 210px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .cta-wrap { padding: 60px 24px; }
+      .section { padding: 100px 0; }
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gal-1, .gal-2, .gal-3, .gal-4 { grid-column: span 1; }
+      .hero-title { font-size: 2.2rem; }
+      .hero-metrics { flex-wrap: wrap; gap: 20px; }
+      .chip { font-size: 0.68rem; padding: 8px 12px; }
+    }
+  </style>
 </head>
 <body>
-  <!-- ======= NAV ======= -->
-  <nav class="navbar" id="navbar">
+
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
     <div class="nav-inner">
       <a href="#" class="nav-logo">
-        <span class="logo-icon">🦆</span>
-        <span class="logo-text">Tech<span class="accent">Ducky</span></span>
+        <span class="duck">🦆</span>
+        <span>Tech<span class="highlight">Ducky</span></span>
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#features">Features</a></li>
         <li><a href="#specs">Specs</a></li>
-        <li><a href="#modules">Modules</a></li>
+        <li><a href="#uses">Use Cases</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
-      <a href="#buy" class="nav-cta">Pre-Order Now</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <a href="#buy" class="nav-btn">Pre-Order</a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ======= HERO ======= -->.
-  <header class="hero" id="hero">
-    <div class="hero-bg-grid"></div>
-    <div class="hero-glow hero-glow--1"></div>
-    <div class="hero-glow hero-glow--2"></div>
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="pulse-dot"></span> Now Available — Limited First Batch
-      </div>
-      <h1 class="hero-title">
-        The Ultimate<br />
-        <span class="gradient-text">All-in-One</span><br />
-        Hacking Gadget
-      </h1>
-      <p class="hero-subtitle">
-        Ducky V1 packs CC1101 Sub-GHz, NRF24L01 2.4 GHz, WiFi, and IR into one
-        pocket-sized device. Analyze, transmit, and explore wireless signals — all from
-        the palm of your hand.
-      </p>
-      <div class="hero-actions">
-        <a href="#buy" class="btn btn--primary">
-          <span>Get Ducky V1</span>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="#features" class="btn btn--ghost">Explore Features</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-value">4</span>
-          <span class="stat-label">RF Modules</span>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="container">
+      <div class="hero-left">
+        <div class="hero-badge"><span class="dot"></span> Limited First Batch — Now Available</div>
+        <h1 class="hero-title">
+          <span class="line">The Ultimate</span>
+          <span class="line grad">All-in-One</span>
+          <span class="line">Hacking Gadget.</span>
+        </h1>
+        <p class="hero-sub">Ducky V1 packs CC1101 Sub-GHz, NRF24L01 2.4 GHz, WiFi &amp; IR into one pocket-sized device. Analyze, transmit, and explore wireless signals — from the palm of your hand.</p>
+        <div class="hero-btns">
+          <a href="#buy" class="btn-primary">
+            Get Ducky V1
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#features" class="btn-outline">Explore Features</a>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-value">&lt;50g</span>
-          <span class="stat-label">Weight</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-value">USB-C</span>
-          <span class="stat-label">Powered</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-value">Open</span>
-          <span class="stat-label">Firmware</span>
+        <div class="hero-metrics">
+          <div class="metric"><span class="metric-val">4</span><span class="metric-label">RF Modules</span></div>
+          <div class="metric-sep"></div>
+          <div class="metric"><span class="metric-val">&lt;50g</span><span class="metric-label">Weight</span></div>
+          <div class="metric-sep"></div>
+          <div class="metric"><span class="metric-val">USB-C</span><span class="metric-label">Charging</span></div>
+          <div class="metric-sep"></div>
+          <div class="metric"><span class="metric-val">Open</span><span class="metric-label">Firmware</span></div>
         </div>
       </div>
-    </div>
-    <div class="hero-visual">
-      <div class="device-showcase">
-        <div class="device-ring device-ring--outer"></div>
-        <div class="device-ring device-ring--inner"></div>
-        <div class="device-body">
-          <div class="device-screen">
-            <div class="screen-line"><span class="prompt">$</span> ducky scan --freq 433mhz</div>
-            <div class="screen-line dim">Scanning Sub-GHz band...</div>
-            <div class="screen-line success">Found 3 devices</div>
-            <div class="screen-line"><span class="prompt">$</span> ducky analyze --all</div>
-            <div class="screen-line dim">Analyzing signals...</div>
-            <div class="screen-line success">Report saved ✓</div>
+      <div class="hero-visual">
+        <div class="device-wrap">
+          <div class="device-orbit device-orbit-1"></div>
+          <div class="device-orbit device-orbit-2"></div>
+          <div class="device-card">
+            <div class="device-screen">
+              <div class="ln"><span class="pr">$</span> ducky scan --freq 433</div>
+              <div class="ln dim">Scanning Sub-GHz band...</div>
+              <div class="ln ok">■ Found 3 devices</div>
+              <div class="ln"><span class="pr">$</span> ducky capture --save</div>
+              <div class="ln dim">Recording signal...</div>
+              <div class="ln ok">■ Saved to /signals/</div>
+              <div class="ln warn">▸ Battery: 87%</div>
+            </div>
+            <div class="device-label">DUCKY V1</div>
           </div>
-          <div class="device-label">DUCKY V1</div>
+          <div class="chip chip-1"><span class="chip-icon">📡</span>CC1101</div>
+          <div class="chip chip-2"><span class="chip-icon">📶</span>NRF24</div>
+          <div class="chip chip-3"><span class="chip-icon">📺</span>IR Blaster</div>
+          <div class="chip chip-4"><span class="chip-icon">🌐</span>WiFi</div>
         </div>
-        <div class="floating-chip chip--1">📡 CC1101</div>
-        <div class="floating-chip chip--2">📶 NRF24</div>
-        <div class="floating-chip chip--3">📺 IR</div>
-        <div class="floating-chip chip--4">🌐 WiFi</div>
       </div>
     </div>
   </header>
 
-  <!-- ======= FEATURES ======= -->
-  <section class="section features" id="features">
+  <!-- FEATURES -->
+  <section class="section" id="features">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Features</span>
-        <h2 class="section-title">Four Radios.<br /><span class="gradient-text">One Device.</span></h2>
-        <p class="section-desc">Every module is purpose-built for wireless exploration, packed into a device that fits in your pocket.</p>
+      <div class="section-head">
+        <span class="tag">Features</span>
+        <h2 class="section-title">Four Radios. <span class="grad">One Device.</span></h2>
+        <p class="section-sub">Every module is purpose-built for wireless exploration, packed into a device that fits in your pocket.</p>
       </div>
       <div class="features-grid">
-        <div class="feature-card feature-card--large" data-reveal>
-          <div class="feature-icon-wrap">
-            <div class="feature-icon">📡</div>
-          </div>
+        <div class="feat" data-anim>
+          <div class="feat-icon">📡</div>
           <h3>Sub-GHz Transceiver</h3>
-          <p>CC1101 chip covers 300–928 MHz. Capture, replay, and analyze signals from garage doors, weather stations, IoT sensors, and more.</p>
-          <div class="feature-tag">CC1101</div>
+          <p>CC1101 covers 300–928 MHz. Capture, replay, and analyze signals from garage doors, weather stations, and IoT sensors.</p>
+          <span class="feat-chip">CC1101</span>
         </div>
-        <div class="feature-card" data-reveal>
-          <div class="feature-icon-wrap">
-            <div class="feature-icon">📶</div>
-          </div>
+        <div class="feat" data-anim>
+          <div class="feat-icon">📶</div>
           <h3>2.4 GHz Radio</h3>
-          <p>NRF24L01 module for high-frequency wireless communication, device pairing analysis, and protocol research.</p>
-          <div class="feature-tag">NRF24L01</div>
+          <p>NRF24L01 for high-frequency wireless communication, device pairing analysis, and protocol research.</p>
+          <span class="feat-chip">NRF24L01</span>
         </div>
-        <div class="feature-card" data-reveal>
-          <div class="feature-icon-wrap">
-            <div class="feature-icon">🌐</div>
-          </div>
+        <div class="feat" data-anim>
+          <div class="feat-icon">🌐</div>
           <h3>WiFi Module</h3>
-          <p>Built-in WiFi for network scanning, packet analysis, and connecting to your local network for remote control.</p>
-          <div class="feature-tag">802.11 b/g/n</div>
+          <p>Network scanning, packet analysis, and connecting to your local network for remote operation.</p>
+          <span class="feat-chip">802.11 b/g/n</span>
         </div>
-        <div class="feature-card" data-reveal>
-          <div class="feature-icon-wrap">
-            <div class="feature-icon">📺</div>
-          </div>
+        <div class="feat" data-anim>
+          <div class="feat-icon">📺</div>
           <h3>Infrared Blaster</h3>
-          <p>Transmit and receive IR signals. Control TVs, ACs, and other appliances. Learn and replay remote codes.</p>
-          <div class="feature-tag">IR TX/RX</div>
+          <p>Transmit and receive IR signals. Control TVs, ACs, and appliances. Learn and replay remote codes.</p>
+          <span class="feat-chip">IR TX/RX</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ======= SPECS ======= -->
-  <section class="section specs" id="specs">
+  <!-- SPECS -->
+  <section class="section" id="specs">
     <div class="container">
-      <div class="specs-layout">
+      <div class="specs-wrap">
         <div class="specs-info">
-          <span class="section-tag">Technical Specs</span>
-          <h2 class="section-title">Engineered for<br /><span class="gradient-text">Performance</span></h2>
-          <p class="section-desc">Every component chosen for reliability, range, and flexibility. Built by hackers, for hackers.</p>
+          <span class="tag">Technical Specs</span>
+          <h2 class="section-title">Engineered for <span class="grad">Performance</span></h2>
+          <p class="section-sub">Every component chosen for reliability, range, and flexibility. Built by hackers, for hackers.</p>
         </div>
-        <div class="specs-table">
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Processor</span>
-            <span class="spec-val">ESP32-S3 Dual-Core 240 MHz</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Sub-GHz</span>
-            <span class="spec-val">CC1101 — 300–928 MHz</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">2.4 GHz</span>
-            <span class="spec-val">NRF24L01 — 2.4 GHz ISM Band</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">WiFi</span>
-            <span class="spec-val">802.11 b/g/n — 2.4 GHz</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">IR</span>
-            <span class="spec-val">38 kHz TX + RX — Universal</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Display</span>
-            <span class="spec-val">1.3" OLED — 128×64 px</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Battery</span>
-            <span class="spec-val">1200 mAh LiPo — USB-C Charging</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Storage</span>
-            <span class="spec-val">MicroSD Slot — up to 64 GB</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Dimensions</span>
-            <span class="spec-val">85 × 55 × 18 mm</span>
-          </div>
-          <div class="spec-row" data-reveal>
-            <span class="spec-key">Weight</span>
-            <span class="spec-val">~48 g (with battery)</span>
-          </div>
+        <div class="specs-list">
+          <div class="spec" data-anim><span class="spec-k">Processor</span><span class="spec-v">ESP32-S3 Dual-Core 240 MHz</span></div>
+          <div class="spec" data-anim><span class="spec-k">Sub-GHz</span><span class="spec-v">CC1101 — 300–928 MHz</span></div>
+          <div class="spec" data-anim><span class="spec-k">2.4 GHz</span><span class="spec-v">NRF24L01 — 2.4 GHz ISM</span></div>
+          <div class="spec" data-anim><span class="spec-k">WiFi</span><span class="spec-v">802.11 b/g/n — 2.4 GHz</span></div>
+          <div class="spec" data-anim><span class="spec-k">IR</span><span class="spec-v">38 kHz TX + RX — Universal</span></div>
+          <div class="spec" data-anim><span class="spec-k">Display</span><span class="spec-v">1.3" OLED — 128×64 px</span></div>
+          <div class="spec" data-anim><span class="spec-k">Battery</span><span class="spec-v">1200 mAh LiPo — USB-C</span></div>
+          <div class="spec" data-anim><span class="spec-k">Storage</span><span class="spec-v">MicroSD — up to 64 GB</span></div>
+          <div class="spec" data-anim><span class="spec-k">Dimensions</span><span class="spec-v">85 × 55 × 18 mm</span></div>
+          <div class="spec" data-anim><span class="spec-k">Weight</span><span class="spec-v">~48 g (with battery)</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ======= MODULES ======= -->
-  <section class="section modules" id="modules">
+  <!-- USE CASES -->
+  <section class="section" id="uses">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Use Cases</span>
-        <h2 class="section-title">What Can You<br /><span class="gradient-text">Do With It?</span></h2>
-        <p class="section-desc">From wireless research to home automation — Ducky V1 adapts to your workflow.</p>
+      <div class="section-head">
+        <span class="tag">Use Cases</span>
+        <h2 class="section-title">What Can You <span class="grad">Do With It?</span></h2>
+        <p class="section-sub">From wireless research to home automation — Ducky V1 adapts to your workflow.</p>
       </div>
-      <div class="modules-grid">
-        <div class="module-card" data-reveal>
-          <div class="module-number">01</div>
-          <h3>Signal Analysis</h3>
-          <p>Scan and decode Sub-GHz signals from IoT devices, weather stations, and smart home gadgets. Visualize waveforms in real-time.</p>
-        </div>
-        <div class="module-card" data-reveal>
-          <div class="module-number">02</div>
-          <h3>Protocol Research</h3>
-          <p>Explore 2.4 GHz protocols with the NRF24 module. Analyze device pairing, discover communication patterns, and test your own implementations.</p>
-        </div>
-        <div class="module-card" data-reveal>
-          <div class="module-number">03</div>
-          <h3>Network Scanning</h3>
-          <p>Use the WiFi module to discover networks, analyze access points, and test connectivity. Pair with your phone for remote operation.</p>
-        </div>
-        <div class="module-card" data-reveal>
-          <div class="module-number">04</div>
-          <h3>IR Remote Control</h3>
-          <p>Learn, store, and replay infrared signals. Build a universal remote or automate your entire living room from one device.</p>
-        </div>
-        <div class="module-card" data-reveal>
-          <div class="module-number">05</div>
-          <h3>Firmware Hacking</h3>
-          <p>Open firmware means full control. Write custom apps, extend functionality, and share your creations with the community.</p>
-        </div>
-        <div class="module-card" data-reveal>
-          <div class="module-number">06</div>
-          <h3>Education & CTF</h3>
-          <p>Perfect for learning RF fundamentals, wireless security concepts, and competing in hardware-focused CTF challenges.</p>
-        </div>
+      <div class="uses-grid">
+        <div class="use" data-anim><div class="use-num">01</div><h3>Signal Analysis</h3><p>Scan and decode Sub-GHz signals from IoT devices, weather stations, and smart home gadgets. Visualize waveforms in real-time.</p></div>
+        <div class="use" data-anim><div class="use-num">02</div><h3>Protocol Research</h3><p>Explore 2.4 GHz protocols with the NRF24 module. Analyze device pairing, discover communication patterns.</p></div>
+        <div class="use" data-anim><div class="use-num">03</div><h3>Network Scanning</h3><p>Discover networks, analyze access points, and test connectivity. Pair with your phone for remote operation.</p></div>
+        <div class="use" data-anim><div class="use-num">04</div><h3>IR Remote Control</h3><p>Learn, store, and replay infrared signals. Build a universal remote or automate your entire living room.</p></div>
+        <div class="use" data-anim><div class="use-num">05</div><h3>Firmware Hacking</h3><p>Open firmware means full control. Write custom apps, extend functionality, and share your creations.</p></div>
+        <div class="use" data-anim><div class="use-num">06</div><h3>Education &amp; CTF</h3><p>Learn RF fundamentals, wireless security concepts, and compete in hardware-focused CTF challenges.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ======= GALLERY ======= -->
-  <section class="section gallery" id="gallery">
+  <!-- GALLERY -->
+  <section class="section" id="gallery">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Gallery</span>
-        <h2 class="section-title">See It<br /><span class="gradient-text">In Action</span></h2>
+      <div class="section-head">
+        <span class="tag">Gallery</span>
+        <h2 class="section-title">See It <span class="grad">In Action</span></h2>
       </div>
       <div class="gallery-grid">
-        <div class="gallery-item gallery-item--wide" data-reveal>
-          <div class="gallery-placeholder">
-            <div class="gallery-icon">🦆</div>
-            <span>Ducky V1 — Front View</span>
-          </div>
-        </div>
-        <div class="gallery-item" data-reveal>
-          <div class="gallery-placeholder">
-            <div class="gallery-icon">📡</div>
-            <span>Sub-GHz Scanning</span>
-          </div>
-        </div>
-        <div class="gallery-item" data-reveal>
-          <div class="gallery-placeholder">
-            <div class="gallery-icon">⚙️</div>
-            <span>Internal PCB</span>
-          </div>
-        </div>
-        <div class="gallery-item gallery-item--wide" data-reveal>
-          <div class="gallery-placeholder">
-            <div class="gallery-icon">📺</div>
-            <span>OLED Interface</span>
-          </div>
-        </div>
+        <div class="gal gal-1" data-anim><span class="gal-emoji">🦆</span><span>Ducky V1 — Front View</span></div>
+        <div class="gal gal-2" data-anim><span class="gal-emoji">📡</span><span>Sub-GHz Scanning</span></div>
+        <div class="gal gal-3" data-anim><span class="gal-emoji">⚙️</span><span>Internal PCB</span></div>
+        <div class="gal gal-4" data-anim><span class="gal-emoji">📺</span><span>OLED Interface</span></div>
       </div>
     </div>
   </section>
 
-  <!-- ======= FAQ ======= -->
-  <section class="section faq" id="faq">
+  <!-- FAQ -->
+  <section class="section" id="faq">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">FAQ</span>
-        <h2 class="section-title">Got<br /><span class="gradient-text">Questions?</span></h2>
+      <div class="section-head">
+        <span class="tag">FAQ</span>
+        <h2 class="section-title">Got <span class="grad">Questions?</span></h2>
       </div>
       <div class="faq-list">
-        <details class="faq-item" data-reveal>
+        <details class="faq-item" data-anim>
           <summary>Is Ducky V1 legal to use?</summary>
-          <div class="faq-answer">
-            <p>Ducky V1 is a research and education tool. Its use must comply with all applicable laws in your jurisdiction. Only use it on devices and networks you own or have explicit authorization to test. Unauthorized interception of signals is illegal.</p>
-          </div>
+          <div class="faq-body">Ducky V1 is a research and education tool. Its use must comply with all applicable laws. Only use it on devices and networks you own or have explicit authorization to test.</div>
         </details>
-        <details class="faq-item" data-reveal>
+        <details class="faq-item" data-anim>
           <summary>What firmware does it run?</summary>
-          <div class="faq-answer">
-            <p>Ducky V1 ships with custom open firmware based on the ESP-IDF framework. You can flash custom firmware via USB-C. Community-maintained alternative firmwares are also available.</p>
-          </div>
+          <div class="faq-body">Ships with custom open firmware based on ESP-IDF. Flash custom firmware via USB-C. Community alternatives are also available.</div>
         </details>
-        <details class="faq-item" data-reveal>
+        <details class="faq-item" data-anim>
           <summary>Can I extend the functionality?</summary>
-          <div class="faq-answer">
-            <p>Absolutely. The open firmware and GPIO breakout pins allow you to add sensors, modules, and custom hardware. The community actively develops plugins and add-ons.</p>
-          </div>
+          <div class="faq-body">Yes. Open firmware and GPIO breakout pins let you add sensors, modules, and custom hardware. Active community plugins available.</div>
         </details>
-        <details class="faq-item" data-reveal>
+        <details class="faq-item" data-anim>
           <summary>What's in the box?</summary>
-          <div class="faq-answer">
-            <p>Ducky V1 unit, USB-C cable, external antenna (SMA), quick-start guide, and sticker pack. Protective case available as an add-on.</p>
-          </div>
+          <div class="faq-body">Ducky V1 unit, USB-C cable, external antenna (SMA), quick-start guide, and sticker pack. Protective case available as add-on.</div>
         </details>
-        <details class="faq-item" data-reveal>
+        <details class="faq-item" data-anim>
           <summary>Do you ship internationally?</summary>
-          <div class="faq-answer">
-            <p>Yes! We ship worldwide. EU and US orders typically arrive in 5–7 business days. International orders may take 10–20 days depending on customs.</p>
-          </div>
+          <div class="faq-body">Yes! Worldwide shipping. EU/US: 5–7 days. International: 10–20 days depending on customs.</div>
         </details>
       </div>
     </div>
   </section>
 
-  <!-- ======= CTA / BUY ======= -->
-  <section class="section cta" id="buy">
+  <!-- CTA -->
+  <section class="section" id="buy">
     <div class="container">
-      <div class="cta-box">
+      <div class="cta-wrap">
         <div class="cta-glow"></div>
-        <div class="cta-content">
-          <h2 class="cta-title">Ready to<br /><span class="gradient-text">Get Yours?</span></h2>
+        <div class="cta-glow-2"></div>
+        <div class="cta-inner">
+          <h2 class="cta-title">Ready to <span class="grad">Get Yours?</span></h2>
           <p class="cta-desc">Limited first batch available now. Secure your Ducky V1 and join the community of wireless explorers.</p>
           <div class="cta-price">
-            <span class="price-amount">€89</span>
-            <span class="price-note">incl. shipping (EU) · Tax may apply</span>
+            <span class="cta-price-val">€89</span>
+            <span class="cta-price-note">incl. shipping (EU) · Tax may apply</span>
           </div>
-          <a href="#" class="btn btn--primary btn--large">
-            <span>Order Ducky V1</span>
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <a href="#" class="btn-primary">
+            Order Ducky V1
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
-          <p class="cta-note">🔒 Secure payment · 30-day return policy</p>
+          <p class="cta-secure">🔒 Secure payment · 30-day return policy</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ======= LEGAL NOTICE ======= -->
-  <section class="section legal-notice">
+  <!-- LEGAL -->
+  <div class="legal">
     <div class="container">
-      <div class="legal-box" data-reveal>
-        <div class="legal-icon">⚠️</div>
+      <div class="legal-box" data-anim>
+        <div class="legal-warn">⚠️</div>
         <h3>Legal Disclaimer</h3>
-        <p>Ducky V1 is intended for <strong>authorized security research, education, and personal use only</strong>. Users are solely responsible for ensuring compliance with all applicable local, national, and international laws. Unauthorized interception, jamming, or manipulation of wireless signals is illegal in most jurisdictions. Tech Ducky assumes no liability for misuse of this product.</p>
+        <p>Ducky V1 is intended for <strong>authorized security research, education, and personal use only</strong>. Users are solely responsible for ensuring compliance with all applicable laws. Unauthorized interception, jamming, or manipulation of wireless signals is illegal. Tech Ducky assumes no liability for misuse.</p>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ======= FOOTER ======= -->
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="#" class="nav-logo">
-            <span class="logo-icon">🦆</span>
-            <span class="logo-text">Tech<span class="accent">Ducky</span></span>
-          </a>
+          <a href="#" class="nav-logo"><span class="duck">🦆</span><span>Tech<span class="highlight">Ducky</span></span></a>
           <p>Building tools for the curious. Explore wireless — responsibly.</p>
         </div>
         <div class="footer-col">
           <h4>Product</h4>
-          <ul>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#specs">Specs</a></li>
-            <li><a href="#modules">Use Cases</a></li>
-            <li><a href="#buy">Buy</a></li>
-          </ul>
+          <ul><li><a href="#features">Features</a></li><li><a href="#specs">Specs</a></li><li><a href="#uses">Use Cases</a></li><li><a href="#buy">Buy</a></li></ul>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <ul>
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">Firmware</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">GitHub</a></li>
-          </ul>
+          <ul><li><a href="#">Documentation</a></li><li><a href="#">Firmware</a></li><li><a href="#">Community</a></li><li><a href="#">GitHub</a></li></ul>
         </div>
         <div class="footer-col">
           <h4>Legal</h4>
-          <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-            <li><a href="#">Imprint</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
+          <ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Imprint</a></li><li><a href="#">Contact</a></li></ul>
         </div>
       </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 Tech Ducky. All rights reserved.</p>
-      </div>
+      <div class="footer-bottom">&copy; 2026 Tech Ducky. All rights reserved.</div>
     </div>
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+  (() => {
+    // ===== PARTICLE CONSTELLATION BACKGROUND =====
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const COUNT = 80;
+    const DIST = 140;
+    let w, h, mouse = { x: -1000, y: -1000 };
 
-      // --- Navbar scroll effect ---
-      const navbar = document.getElementById('navbar');
-      const onScroll = () => {
-        navbar.classList.toggle('scrolled', window.scrollY > 40);
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-      // --- Mobile nav toggle ---
-      const navToggle = document.getElementById('navToggle');
-      const navLinks = document.getElementById('navLinks');
+    class P {
+      constructor() {
+        this.x = Math.random() * w; this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.4; this.vy = (Math.random() - 0.5) * 0.4;
+        this.r = Math.random() * 1.5 + 0.5;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > w) this.vx *= -1;
+        if (this.y < 0 || this.y > h) this.vy *= -1;
+        const dx = mouse.x - this.x, dy = mouse.y - this.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 200) { this.x -= dx * 0.005; this.y -= dy * 0.005; }
+      }
+      draw() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(124,92,252,0.5)'; ctx.fill();
+      }
+    }
+    for (let i = 0; i < COUNT; i++) particles.push(new P());
 
-      navToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('open');
-        const spans = navToggle.querySelectorAll('span');
-        if (navLinks.classList.contains('open')) {
-          spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-          spans[1].style.opacity = '0';
-          spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
-        } else {
-          spans[0].style.transform = '';
-          spans[1].style.opacity = '';
-          spans[2].style.transform = '';
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < DIST) {
+            ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(124,92,252,${0.08 * (1 - d / DIST)})`;
+            ctx.lineWidth = 0.5; ctx.stroke();
+          }
         }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ===== NAV =====
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50), { passive: true });
+
+    // ===== HAMBURGER =====
+    const hb = document.getElementById('hamburger'), nl = document.getElementById('navLinks');
+    hb.addEventListener('click', () => { hb.classList.toggle('open'); nl.classList.toggle('open'); });
+    nl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { hb.classList.remove('open'); nl.classList.remove('open'); }));
+
+    // ===== SCROLL REVEAL =====
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 60); obs.unobserve(e.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('[data-anim]').forEach(el => obs.observe(el));
+
+    // ===== SMOOTH SCROLL =====
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const h = a.getAttribute('href'); if (h === '#') return;
+        const t = document.querySelector(h); if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
       });
-
-      // Close mobile menu on link click
-      navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navLinks.classList.remove('open');
-          const spans = navToggle.querySelectorAll('span');
-          spans[0].style.transform = '';
-          spans[1].style.opacity = '';
-          spans[2].style.transform = '';
-        });
-      });
-
-      // --- Scroll reveal ---
-      const revealElements = document.querySelectorAll('[data-reveal]');
-
-      const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              entry.target.classList.add('revealed');
-            }, i * 80);
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px'
-      });
-
-      revealElements.forEach(el => revealObserver.observe(el));
-
-      // --- Smooth scroll for anchor links ---
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', (e) => {
-          const href = anchor.getAttribute('href');
-          if (href === '#') return;
-          const target = document.querySelector(href);
-          if (target) {
-            e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        });
-      });
-
-      // --- Active nav link highlight ---
-      const sections = document.querySelectorAll('section[id]');
-      const navAnchors = document.querySelectorAll('.nav-links a');
-
-      const highlightNav = () => {
-        const scrollPos = window.scrollY + 200;
-        sections.forEach(section => {
-          const top = section.offsetTop;
-          const height = section.offsetHeight;
-          const id = section.getAttribute('id');
-          if (scrollPos >= top && scrollPos < top + height) {
-            navAnchors.forEach(a => {
-              a.style.color = '';
-              if (a.getAttribute('href') === `#${id}`) {
-                a.style.color = 'var(--accent-2)';
-              }
-            });
-          }
-        });
-      };
-
-      window.addEventListener('scroll', highlightNav, { passive: true });
-
     });
+  })();
   </script>
 </body>
 </html>
